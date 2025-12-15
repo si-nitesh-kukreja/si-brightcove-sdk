@@ -62,26 +62,26 @@ import java.util.*
 fun LiveStreamScreen(
     eventType: EventType,
     environment: Environment,
-    accountId: String? = null,
-    policyKey: String? = null,
-    videoId: String = "",
     debug: Boolean = BuildConfig.DEBUG,
     onClose: (() -> Unit)? = null,
     onStateChanged: ((LiveStreamState) -> Unit)? = null,
     onError: ((String, SDKError) -> Unit)? = null,
     onPlayerEvent: ((PlayerEvent) -> Unit)? = null,
     preLiveImageUrl: String? = null,
-    preLiveScheduledTime: Date? = null,
     liveTitle: String = "",
     liveDescription: String = "",
-    showCloseButton: Boolean = false,
     showPlayerControls: Boolean = false,
-    errorRetryText: String = "Retry",
-    loadingText: String = "Loading...",
-    backgroundColor: Color = Color.Black,
     modifier: Modifier
 ) {
     val context = LocalContext.current
+    val accountId: String? = null
+    val policyKey: String? = null
+    val videoId = ""
+    val errorRetryText = "Retry"
+    val backgroundColor: Color = Color.Black
+    val preLiveScheduledTime: Date? = null
+    val showCloseButton = false
+    val loadingText = "Loading..."
     
     // Ensure SDK is initialized before creating the ViewModel to avoid race conditions.
     if (!BrightcoveLiveStreamSDK.isInitialized()) {
