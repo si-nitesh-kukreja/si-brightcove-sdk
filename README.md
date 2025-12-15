@@ -131,7 +131,7 @@ dependencies {
 
 Initialize the SDK and use `LiveStreamScreen` in your Compose UI. The SDK maps credentials internally based on `eventType` and `environment`, with optional overrides.
 
-#### Basic Usage
+#### Basic Usage with Auto Initializing
 
 ```kotlin
 import androidx.compose.foundation.layout.fillMaxSize
