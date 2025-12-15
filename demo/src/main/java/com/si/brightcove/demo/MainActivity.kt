@@ -60,13 +60,13 @@ class MainActivity : ComponentActivity() {
                             handlePlayerEvent(event)
                         },
                         preLiveImageUrl = "https://picsum.photos/seed/picsum/200/300",
-                        preLiveScheduledTime = Date(System.currentTimeMillis() + 3600000), // 1 hour from now
+//                        preLiveScheduledTime = Date(System.currentTimeMillis() + 3600000), // 1 hour from now
                         liveTitle = "Live Stream Demo",
                         liveDescription = "This is a demonstration of the Brightcove Live Streaming SDK",
-                        showCloseButton = false,
+//                        showCloseButton = false,
                         showPlayerControls = false,
-                        errorRetryText = "Retry",
-                        loadingText = "Loading stream...",
+//                        errorRetryText = "Retry",
+//                        loadingText = "Loading stream...",
                         modifier = Modifier.fillMaxSize().height(200.dp),
                     )
                 }
