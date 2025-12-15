@@ -31,7 +31,7 @@ object BrightcoveLiveStreamSDK {
     private const val VIDEO_ID_MOBILE_PROD = "6384389158112"
     private const val VIDEO_ID_CAMERA_PROD = "6384085229112"
     private const val VIDEO_ID_MOBILE_NON_PROD = "6384389158112"
-    private const val VIDEO_ID_CAMERA_NON_PROD = "6384389158112"
+    private const val VIDEO_ID_CAMERA_NON_PROD = "6384085229112"
 
     private const val ACCOUNT_ID_MOBILE_PROD = "6415818918001"
     private const val ACCOUNT_ID_CAMERA_PROD = "6415818918001"

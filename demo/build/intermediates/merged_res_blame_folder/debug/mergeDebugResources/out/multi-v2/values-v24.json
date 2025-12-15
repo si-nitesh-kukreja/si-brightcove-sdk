@@ -4,7 +4,7 @@
             "outputFile": "com.si.brightcove.demo-mergeDebugResources-44:/values-v24/values-v24.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\640e32a5694169d7b740d549521adcde\\transformed\\media-1.6.0\\res\\values-v24\\values-v24.xml",
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\640e32a5694169d7b740d549521adcde\\transformed\\media-1.6.0\\res\\values-v24\\values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

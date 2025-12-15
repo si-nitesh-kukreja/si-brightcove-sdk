@@ -4,24 +4,7 @@
             "outputFile": "com.si.brightcove.demo-mergeDebugResources-44:/values-en-rIN/values-en-rIN.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\31364c226d7f5d688101a2ca4371a8cd\\transformed\\core-1.17.0\\res\\values-en-rIN\\values-en-rIN.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,151,253,352,451,555,658,774",
-                        "endColumns": "95,101,98,98,103,102,115,100",
-                        "endOffsets": "146,248,347,446,550,653,769,870"
-                    },
-                    "to": {
-                        "startLines": "20,21,22,23,24,25,26,154",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "781,877,979,1078,1177,1281,1384,12849",
-                        "endColumns": "95,101,98,98,103,102,115,100",
-                        "endOffsets": "872,974,1073,1172,1276,1379,1495,12945"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\663c66d9edee34b77017dec83e1b5282\\transformed\\exoplayer-ui-2.19.1\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\663c66d9edee34b77017dec83e1b5282\\transformed\\exoplayer-ui-2.19.1\\res\\values-en-rIN\\values-en-rIN.xml",
                     "from": {
                         "startLines": "2,11,15,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -40,58 +23,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\96f7bbbc22cb29f912c41246b6305890\\transformed\\extension-mediasession-2.19.1\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\31364c226d7f5d688101a2ca4371a8cd\\transformed\\core-1.17.0\\res\\values-en-rIN\\values-en-rIN.xml",
                     "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,134,214",
-                        "endColumns": "78,79,78",
-                        "endOffsets": "129,209,288"
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,151,253,352,451,555,658,774",
+                        "endColumns": "95,101,98,98,103,102,115,100",
+                        "endOffsets": "146,248,347,446,550,653,769,870"
                     },
                     "to": {
-                        "startLines": "66,67,68",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "4556,4635,4715",
-                        "endColumns": "78,79,78",
-                        "endOffsets": "4630,4710,4789"
+                        "startLines": "20,21,22,23,24,25,26,154",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "781,877,979,1078,1177,1281,1384,12849",
+                        "endColumns": "95,101,98,98,103,102,115,100",
+                        "endOffsets": "872,974,1073,1172,1276,1379,1495,12945"
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\26f9c8068486af0a3e1657621a5eb8fb\\transformed\\exoplayer-core-2.19.1\\res\\values-en-rIN\\values-en-rIN.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,125,187,252,316,393,458,548,633",
-                        "endColumns": "69,61,64,63,76,64,89,84,68",
-                        "endOffsets": "120,182,247,311,388,453,543,628,697"
-                    },
-                    "to": {
-                        "startLines": "56,57,58,59,60,61,62,63,64",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "3856,3926,3988,4053,4117,4194,4259,4349,4434",
-                        "endColumns": "69,61,64,63,76,64,89,84,68",
-                        "endOffsets": "3921,3983,4048,4112,4189,4254,4344,4429,4498"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\b96312f0ed4782debb8c38e47376bdd4\\transformed\\ui-release\\res\\values-en-rIN\\values-en-rIN.xml",
-                    "from": {
-                        "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "181,273,355,449,548,635,717,806,895,979,1057,1139,1212,1296,1372,1444,1514,1591,1657",
-                        "endColumns": "91,81,93,98,86,81,88,88,83,77,81,72,83,75,71,69,76,65,120",
-                        "endOffsets": "268,350,444,543,630,712,801,890,974,1052,1134,1207,1291,1367,1439,1509,1586,1652,1773"
-                    },
-                    "to": {
-                        "startLines": "27,28,29,30,31,86,87,145,146,147,148,149,150,151,152,153,155,156,157",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "1500,1592,1674,1768,1867,5856,5938,12141,12230,12314,12392,12474,12547,12631,12707,12779,12950,13027,13093",
-                        "endColumns": "91,81,93,98,86,81,88,88,83,77,81,72,83,75,71,69,76,65,120",
-                        "endOffsets": "1587,1669,1763,1862,1949,5933,6022,12225,12309,12387,12469,12542,12626,12702,12774,12844,13022,13088,13209"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\7099f9769e57b05c5ddb502a639bf71c\\transformed\\foundation-release\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\7099f9769e57b05c5ddb502a639bf71c\\transformed\\foundation-release\\res\\values-en-rIN\\values-en-rIN.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",
@@ -108,7 +57,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\9947fa311f82f7f106c1477fee818b87\\transformed\\material3-release\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\9947fa311f82f7f106c1477fee818b87\\transformed\\material3-release\\res\\values-en-rIN\\values-en-rIN.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -122,6 +71,57 @@
                         "startOffsets": "6027,6145,6261,6372,6486,6585,6680,6792,6928,7044,7180,7264,7363,7454,7551,7670,7795,7899,8026,8149,8277,8438,8559,8675,8798,8923,9015,9113,9230,9354,9451,9553,9655,9785,9924,10030,10129,10207,10303,10397,10502,10589,10676,10778,10860,10944,11045,11146,11246,11345,11433,11539,11640,11744,11864,11946,12046",
                         "endColumns": "117,115,110,113,98,94,111,135,115,135,83,98,90,96,118,124,103,126,122,127,160,120,115,122,124,91,97,116,123,96,101,101,129,138,105,98,77,95,93,104,86,86,101,81,83,100,100,99,98,87,105,100,103,119,81,99,94",
                         "endOffsets": "6140,6256,6367,6481,6580,6675,6787,6923,7039,7175,7259,7358,7449,7546,7665,7790,7894,8021,8144,8272,8433,8554,8670,8793,8918,9010,9108,9225,9349,9446,9548,9650,9780,9919,10025,10124,10202,10298,10392,10497,10584,10671,10773,10855,10939,11040,11141,11241,11340,11428,11534,11635,11739,11859,11941,12041,12136"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\b96312f0ed4782debb8c38e47376bdd4\\transformed\\ui-release\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "from": {
+                        "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "181,273,355,449,548,635,717,806,895,979,1057,1139,1212,1296,1372,1444,1514,1591,1657",
+                        "endColumns": "91,81,93,98,86,81,88,88,83,77,81,72,83,75,71,69,76,65,120",
+                        "endOffsets": "268,350,444,543,630,712,801,890,974,1052,1134,1207,1291,1367,1439,1509,1586,1652,1773"
+                    },
+                    "to": {
+                        "startLines": "27,28,29,30,31,86,87,145,146,147,148,149,150,151,152,153,155,156,157",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "1500,1592,1674,1768,1867,5856,5938,12141,12230,12314,12392,12474,12547,12631,12707,12779,12950,13027,13093",
+                        "endColumns": "91,81,93,98,86,81,88,88,83,77,81,72,83,75,71,69,76,65,120",
+                        "endOffsets": "1587,1669,1763,1862,1949,5933,6022,12225,12309,12387,12469,12542,12626,12702,12774,12844,13022,13088,13209"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\96f7bbbc22cb29f912c41246b6305890\\transformed\\extension-mediasession-2.19.1\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,134,214",
+                        "endColumns": "78,79,78",
+                        "endOffsets": "129,209,288"
+                    },
+                    "to": {
+                        "startLines": "66,67,68",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "4556,4635,4715",
+                        "endColumns": "78,79,78",
+                        "endOffsets": "4630,4710,4789"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\narendra.gupta\\.gradle\\caches\\8.13\\transforms\\26f9c8068486af0a3e1657621a5eb8fb\\transformed\\exoplayer-core-2.19.1\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,187,252,316,393,458,548,633",
+                        "endColumns": "69,61,64,63,76,64,89,84,68",
+                        "endOffsets": "120,182,247,311,388,453,543,628,697"
+                    },
+                    "to": {
+                        "startLines": "56,57,58,59,60,61,62,63,64",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "3856,3926,3988,4053,4117,4194,4259,4349,4434",
+                        "endColumns": "69,61,64,63,76,64,89,84,68",
+                        "endOffsets": "3921,3983,4048,4112,4189,4254,4344,4429,4498"
                     }
                 }
             ]
