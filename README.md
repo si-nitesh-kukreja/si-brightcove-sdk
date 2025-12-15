@@ -6,16 +6,19 @@ A native Android SDK built with Jetpack Compose that provides a single, embeddab
 
 - ✅ **Native Jetpack Compose UI** - Fully native Compose implementation
 - ✅ **Single Public Screen** - One composable (`LiveStreamScreen`) for easy integration
-- ✅ **Two States** - Pre-live and Live stream states with automatic transitions
-- ✅ **Brightcove Integration** - Fully encapsulated Brightcove player logic
+- ✅ **Multiple States** - Loading, Pre-live, and Live stream states with automatic transitions
+- ✅ **Brightcove Integration** - Fully encapsulated Brightcove player logic with event handling
 - ✅ **Analytics** - Built-in pageview tracking
-- ✅ **AAR Distribution** - Packaged as Android Library (AAR)
+- ✅ **Fullscreen Support** - Native fullscreen with system bar management and orientation handling
+- ✅ **Error Handling** - Robust error recovery with retry mechanisms
+- ✅ **AAR Distribution** - Packaged as Android Library (AAR) with Maven publishing
+- ✅ **Demo App** - Included demo module for testing and validation
 
 ## Requirements
 
 - Android API 24+ (Android 7.0+)
 - Jetpack Compose
-- Brightcove account with Account ID, Policy Key, and Video ID
+- Brightcove account (credentials are mapped internally based on event type and environment)
 
 ## Installation
 
@@ -37,53 +40,152 @@ dependencies {
 }
 ```
 
-## Quick Start
+### Maven Publishing
 
-### 1. Initialize the SDK
+The SDK can be published to a Maven repository for distribution.
 
-#### Basic Initialization
+#### Prerequisites
+- Ensure the `maven-publish` plugin is applied in your `build.gradle.kts` (already configured)
+- Configure publishing settings in `gradle.properties`
 
-Initialize the SDK once per app lifecycle (typically in your `Application` class):
+#### 1. Configure Credentials
+
+Add your Maven repository credentials to `gradle.properties`:
+
+```properties
+mavenUser=your_maven_username
+mavenPassword=your_maven_password
+```
+
+#### 2. Publishing Configuration
+
+The publishing block in `app/build.gradle.kts` should be configured as follows:
 
 ```kotlin
-import com.si.brightcove.sdk.BrightcoveLiveStreamSDK
+plugins {
+    // ... other plugins
+    id("maven-publish")
+}
 
-class MyApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        
-        BrightcoveLiveStreamSDK.initialize(
-            context = this,
-            accountId = "YOUR_ACCOUNT_ID",
-            policyKey = "YOUR_POLICY_KEY",
-            videoId = "YOUR_VIDEO_ID",
-            debug = BuildConfig.DEBUG
-        )
+publishing {
+    publications {
+        create<MavenPublication>("mavenAar") {
+            groupId = "com.si.brightcove"
+            artifactId = "sdk"
+            version = "1.0.0"
+
+            from(components["release"])
+        }
+    }
+
+    repositories {
+        maven {
+            name = "YourRepo"
+            url = uri("https://your-maven-repo.com/releases")
+            credentials {
+                username = mavenUser
+                password = mavenPassword
+            }
+        }
     }
 }
 ```
 
-#### Advanced Initialization (with Configuration Options)
+#### 3. Publish Commands
 
-For more control over SDK behavior:
-
-```kotlin
-BrightcoveLiveStreamSDK.initialize(
-    context = this,
-    accountId = "YOUR_ACCOUNT_ID",
-    policyKey = "YOUR_POLICY_KEY",
-    videoId = "YOUR_VIDEO_ID",
-    debug = BuildConfig.DEBUG,
-    pollingIntervalMs = 5_000,        // Check for stream every 5 seconds
-    autoRetryOnError = true,            // Automatically retry on errors
-    maxRetryAttempts = 3,               // Maximum retry attempts
-    retryBackoffMultiplier = 2.0        // Exponential backoff multiplier
-)
+**Publish to configured repository:**
+```bash
+./gradlew publish
 ```
 
-### 2. Use LiveStreamScreen in Your App
+**Publish to local Maven repository (for testing):**
+```bash
+./gradlew publishToMavenLocal
+```
 
-Simply add the `LiveStreamScreen` composable to your existing Compose UI:
+**Publish specific publication:**
+```bash
+./gradlew publishMavenAarPublicationToYourRepoRepository
+```
+
+#### 4. Verify Publication
+
+After publishing, verify the artifact is available:
+
+- **Local repo**: Check `~/.m2/repository/com/si/brightcove/sdk/1.0.0/`
+- **Remote repo**: Check your Maven repository manager (e.g., Nexus, Artifactory)
+
+#### 5. Using Published Artifact
+
+Once published, other projects can use:
+
+```kotlin
+dependencies {
+    implementation("com.si.brightcove:sdk:1.0.0")
+}
+```
+
+## Quick Start
+
+### 1. Initialize the SDK and Use LiveStreamScreen
+
+Initialize the SDK and use `LiveStreamScreen` in your Compose UI. The SDK maps credentials internally based on `eventType` and `environment`, with optional overrides.
+
+#### Basic Usage
+
+```kotlin
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import com.si.brightcove.sdk.BrightcoveLiveStreamSDK
+import com.si.brightcove.sdk.ui.LiveStreamScreen
+import com.si.brightcove.sdk.model.EventType
+import com.si.brightcove.sdk.model.Environment
+
+@Composable
+fun MyScreen() {
+    // Use LiveStreamScreen
+    LiveStreamScreen(
+        eventType = EventType.MOBILE,
+        environment = Environment.PROD,
+        modifier = Modifier.fillMaxSize()
+        // ... other parameters
+    )
+}
+```
+
+#### Advanced Usage (with Overrides and Configuration)
+
+For more control, override credentials or adjust behavior:
+
+```kotlin
+@Composable
+fun MyScreen() {
+    // Initialize SDK with overrides
+    BrightcoveLiveStreamSDK.initialize(
+        context = LocalContext.current,
+        eventType = EventType.MOBILE,
+        environment = Environment.PROD,
+        accountId = "CUSTOM_ACCOUNT_ID",     // Optional: Override default mapping
+        policyKey = "CUSTOM_POLICY_KEY",     // Optional: Override default mapping
+        videoId = "CUSTOM_VIDEO_ID",         // Optional: Override default mapping
+        debug = BuildConfig.DEBUG,
+        pollingIntervalMs = 1_000,           // Check for stream every 1 second
+        autoRetryOnError = true,             // Automatically retry on errors
+        maxRetryAttempts = 3,                // Maximum retry attempts
+        retryBackoffMultiplier = 2.0         // Exponential backoff multiplier
+    )
+
+    // Use LiveStreamScreen
+    LiveStreamScreen(
+        eventType = EventType.MOBILE,
+        environment = Environment.PROD,
+        modifier = Modifier.fillMaxSize()
+        // ... other parameters
+    )
+}
+```
+
+Add the `LiveStreamScreen` composable to your existing Compose UI. The event type and environment are required and should match your initialization.
 
 ```kotlin
 import androidx.compose.foundation.layout.fillMaxSize
@@ -92,11 +194,15 @@ import com.si.brightcove.sdk.ui.LiveStreamScreen
 import com.si.brightcove.sdk.model.LiveStreamState
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.model.SDKError
+import com.si.brightcove.sdk.model.EventType
+import com.si.brightcove.sdk.model.Environment
 import java.util.Date
 
 @Composable
 fun MyScreen() {
     LiveStreamScreen(
+        eventType = EventType.MOBILE,
+        environment = Environment.PROD,
         onClose = {
             // Handle close/dismiss action
             // e.g., navigate back, close dialog, etc.
@@ -171,32 +277,42 @@ fun MyScreen() {
 
 #### `initialize()` (Basic)
 
-Initialize the SDK with required Brightcove credentials.
+Initialize the SDK with required event type and environment. Credentials are mapped internally.
 
 **Parameters:**
 - `context: Context` - Application context
-- `accountId: String` - Brightcove Account ID
-- `policyKey: String` - Brightcove Policy Key
-- `videoId: String` - Brightcove Video ID for the live stream
+- `eventType: EventType` - MOBILE or CAMERA (determines credential mapping)
+- `environment: Environment` - PROD or NON_PROD (determines credential mapping)
 - `debug: Boolean` - Enable debug logging (default: `false`)
 
 **Throws:** `IllegalStateException` if SDK is already initialized
 
 #### `initialize()` (Advanced)
 
-Initialize the SDK with advanced configuration options.
+Initialize the SDK with optional credential overrides and advanced configuration.
 
-**Additional Parameters:**
-- `pollingIntervalMs: Long` - Interval in milliseconds to check for stream availability (default: `30000`)
+**Parameters:**
+- `context: Context` - Application context
+- `eventType: EventType` - MOBILE or CAMERA (determines credential mapping)
+- `environment: Environment` - PROD or NON_PROD (determines credential mapping)
+- `accountId: String?` - Optional override for Brightcove Account ID
+- `policyKey: String?` - Optional override for Brightcove Policy Key
+- `videoId: String?` - Optional override for Brightcove Video ID
+- `debug: Boolean` - Enable debug logging (default: `false`)
+- `pollingIntervalMs: Long` - Interval in milliseconds to check for stream availability (default: `1000`)
 - `autoRetryOnError: Boolean` - Whether to automatically retry on errors (default: `true`)
 - `maxRetryAttempts: Int` - Maximum number of retry attempts (default: `3`)
 - `retryBackoffMultiplier: Double` - Multiplier for exponential backoff (default: `2.0`)
+
+**Note:** If accountId, policyKey, or videoId are not provided, the SDK uses hardcoded mappings based on eventType and environment.
 
 ### LiveStreamScreen
 
 The main public composable for displaying live streams.
 
 **Parameters:**
+- `eventType: EventType` - MOBILE or CAMERA (required, determines credentials)
+- `environment: Environment` - PROD or NON_PROD (required, determines credentials)
 - `onClose: (() -> Unit)?` - Optional callback when user taps close/back button
 - `onStateChanged: ((LiveStreamState) -> Unit)?` - Optional callback when stream state changes
 - `onError: ((String, SDKError) -> Unit)?` - Optional callback when an error occurs
@@ -278,7 +394,8 @@ sealed class PlayerEvent {
 ### Loading State (`LiveStreamState.Loading`)
 
 Displayed while checking stream availability:
-- Shows loading indicator with customizable text
+- Shows live title, description, and a small loader
+- Uses a black background to prevent white patches
 - Automatically transitions to PreLive or Live state
 - Parent apps can react to this state via `onStateChanged` callback
 
@@ -345,6 +462,7 @@ LiveStreamScreen(
 ### Player Controls & Customization
 - ✅ **Player Events**: Callbacks for playback, buffering, errors, etc.
 - ✅ **Control Visibility**: Show/hide native Brightcove player controls
+- ✅ **Fullscreen Support**: Native fullscreen with system bar management and orientation handling
 - ✅ **Event Tracking**: Track all player events for analytics
 
 ### Configuration & Customization
@@ -388,12 +506,25 @@ com.si.brightcove.sdk
 ├── player
 │   └── BrightcovePlayerView         # Brightcove player wrapper
 ├── model
-│   └── LiveStreamState              # State models
+│   ├── LiveStreamState              # State models
+│   ├── EventType                    # MOBILE or CAMERA
+│   └── Environment                  # PROD or NON_PROD
 ├── config
 │   └── SDKConfig                    # Internal configuration
 └── analytics
     └── AnalyticsManager              # Analytics tracking
 ```
+
+## Demo App
+
+The project includes a demo module (`demo/`) for testing and validation:
+
+- **Purpose**: Test SDK integration without external dependencies
+- **Setup**: Initializes the SDK and hosts `LiveStreamScreen`
+- **Usage**: Run the demo app to verify functionality
+- **Build**: `./gradlew :demo:assembleDebug`
+
+Use the demo app to validate changes and ensure the SDK works as expected in a real Android application.
 
 ## Building the AAR
 
