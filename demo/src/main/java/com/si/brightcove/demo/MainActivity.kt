@@ -4,15 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.si.brightcove.sdk.model.Environment
 import com.si.brightcove.sdk.model.EventType
@@ -20,7 +16,6 @@ import com.si.brightcove.sdk.model.LiveStreamState
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.model.SDKError
 import com.si.brightcove.sdk.ui.LiveStreamScreen
-import java.util.*
 
 /**
  * Main Activity for the demo app.
@@ -40,34 +35,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // Live Stream Screen - Main SDK entry point
                     LiveStreamScreen(
-                        eventType = EventType.CAMERA,
-                        environment = Environment.NON_PROD,
-                        onClose = {
-                            // Handle close action
-                            // In a real app, you might navigate back or close the screen
-                            finish()
-                        },
-                        onStateChanged = { state ->
-                            // Handle state changes
-                            handleStateChange(state)
-                        },
-                        onError = { errorMessage, errorCode ->
-                            // Handle errors
-                            handleError(errorMessage, errorCode)
-                        },
-                        onPlayerEvent = { event ->
-                            // Handle player events
-                            handlePlayerEvent(event)
-                        },
-                        preLiveImageUrl = "https://picsum.photos/seed/picsum/200/300",
-//                        preLiveScheduledTime = Date(System.currentTimeMillis() + 3600000), // 1 hour from now
-                        liveTitle = "Live Stream Demo",
-                        liveDescription = "This is a demonstration of the Brightcove Live Streaming SDK",
-//                        showCloseButton = false,
-                        showPlayerControls = false,
-//                        errorRetryText = "Retry",
-//                        loadingText = "Loading stream...",
-                        modifier = Modifier.fillMaxSize().height(200.dp),
+                        eventType = EventType.mobile,
+                        environment = Environment.prod,
+                        modifier = Modifier.fillMaxSize(),
+                        locale = "en"
                     )
                 }
             }
@@ -83,7 +54,7 @@ class MainActivity : ComponentActivity() {
                 android.util.Log.d("BrightcoveSDK", "State: Loading stream...")
             }
             is LiveStreamState.PreLive -> {
-                android.util.Log.d("BrightcoveSDK", "State: Pre-Live - Scheduled: ${state.scheduledTime}")
+                android.util.Log.d("BrightcoveSDK", "State: Pre-Live - Scheduled: ${state.mediaTitle}")
             }
             is LiveStreamState.Live -> {
                 android.util.Log.d("BrightcoveSDK", "State: Live - Title: ${state.title} Description : ${state.description}")

@@ -1,0 +1,55 @@
+{
+    "camera": {
+        "prod": {
+            "videoId": "6386317292112",
+            "state": "preLive",
+            "languages": {
+                "en": {
+                    "mediaType": "image",
+                    "mediaUrl": "https://images.unsplash.com/photo-1615440321449-83897161d806?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZlcnJhcml8ZW58MHx8MHx8fDA%3D",
+                    "mediaTitle": "",
+                    "mediaLoop": true
+                },
+                "it": {
+                    "mediaType": "imageTitle",
+                    "mediaUrl": "",
+                    "mediaTitle": "",
+                    "mediaLoop": true
+                },
+                "kl": {
+                    "mediaType": "image",
+                    "mediaUrl": "https://i.pinimg.com/736x/7a/4a/45/7a4a45ecb7e8254892665d97f82a1706.jpg",
+                    "mediaTitle": "",
+                    "mediaLoop": true
+                }
+            }
+        },
+        "nonProd": {}
+    },
+    "mobile": {
+        "prod": {
+            "videoId": "6386375769112",
+            "state": "postlive",
+            "languages": {
+                "en": {
+                    "mediaType": "image",
+                    "mediaUrl": "https://i.pinimg.com/736x/7a/4a/45/7a4a45ecb7e8254892665d97f82a1706.jpg",
+                    "mediaTitle": "Starting soon abhi",
+                    "mediaLoop": false
+                },
+                "it": {
+                    "mediaType": "image",
+                    "mediaUrl": "",
+                    "mediaTitle": "Starting soon narendra",
+                    "mediaLoop": false
+                },
+                "kl": {
+                    "mediaType": "video",
+                    "mediaUrl": "https://cdn.pixabay.com/video/2024/08/16/226795_large.mp4",
+                    "mediaTitle": "",
+                    "mediaLoop": true
+                }
+            }
+        }
+    }
+}

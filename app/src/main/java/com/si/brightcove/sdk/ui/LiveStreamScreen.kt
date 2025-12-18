@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,6 +27,7 @@ import com.si.brightcove.sdk.model.EventType
 import com.si.brightcove.sdk.model.Environment
 import com.si.brightcove.sdk.BuildConfig
 import com.si.brightcove.sdk.model.LiveStreamState
+import com.si.brightcove.sdk.model.MediaType
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.model.SDKError
 import com.si.brightcove.sdk.player.BrightcovePlayerView
@@ -35,9 +37,9 @@ import java.util.*
 
 /**
  * Main public UI entry point for the Live Streaming SDK.
- * 
+ *
  * This is the single composable that parent apps should use to display live streaming.
- * 
+ *
  * @param onClose Optional callback when user taps close/back button
  * @param onStateChanged Optional callback when the stream state changes
  * @param onError Optional callback when an error occurs
@@ -46,6 +48,8 @@ import java.util.*
  * @param preLiveScheduledTime Date/time when the live stream is scheduled to start
  * @param eventType Required event type (MOBILE/CAMERA)
  * @param environment Required environment (PROD/NON_PROD)
+ * @param locale Required locale identifier (e.g., "en", "hi", "it") for configuration
+ * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
  * @param accountId Optional override for Brightcove Account ID
  * @param policyKey Optional override for Brightcove Policy Key
  * @param videoId Optional Brightcove Video ID for the stream
@@ -62,12 +66,12 @@ import java.util.*
 fun LiveStreamScreen(
     eventType: EventType,
     environment: Environment,
+    locale: String,
     debug: Boolean = BuildConfig.DEBUG,
     onClose: (() -> Unit)? = null,
     onStateChanged: ((LiveStreamState) -> Unit)? = null,
     onError: ((String, SDKError) -> Unit)? = null,
     onPlayerEvent: ((PlayerEvent) -> Unit)? = null,
-    preLiveImageUrl: String? = null,
     liveTitle: String = "",
     liveDescription: String = "",
     showPlayerControls: Boolean = false,
@@ -82,6 +86,7 @@ fun LiveStreamScreen(
     val preLiveScheduledTime: Date? = null
     val showCloseButton = false
     val loadingText = "Loading..."
+    val state = false
     
     // Ensure SDK is initialized before creating the ViewModel to avoid race conditions.
     if (!BrightcoveLiveStreamSDK.isInitialized()) {
@@ -89,6 +94,8 @@ fun LiveStreamScreen(
             context = context,
             eventType = eventType,
             environment = environment,
+            locale = locale,
+            state = state,
             videoId = videoId,
             accountId = accountId,
             policyKey = policyKey,
@@ -137,95 +144,142 @@ fun LiveStreamScreen(
     // Note: We don't need to create player view early anymore since we use standalone EventEmitter
     // for Catalog creation. The player view will be created when Live state is reached.
     
-    Box(modifier = modifier.fillMaxSize().background(backgroundColor)) {
-        val currentState = streamState
-        when (currentState) {
-            is LiveStreamState.Loading -> {
-                LoadingContent(
-                    liveTitle = liveTitle,
-                    liveDescription = liveDescription,
-                    loadingText = loadingText,
-                    modifier = modifier
-                )
-            }
-            is LiveStreamState.PreLive -> {
-                PreLiveContent(
-                    imageUrl = preLiveImageUrl ?: currentState.imageUrl,
-                    scheduledTime = preLiveScheduledTime ?: currentState.scheduledTime,
-                    modifier = modifier
-                )
-            }
-            is LiveStreamState.Live -> {
-                LiveStreamContent(
-                    viewModel = viewModel,
-                    title = liveTitle.ifEmpty { currentState.title },
-                    description = liveDescription.ifEmpty { currentState.description },
-                    showOverlay = showOverlay,
-                    showPlayerControls = showPlayerControls,
-                    onTap = { viewModel.toggleOverlay() },
-                    onClose = onClose,
-                    showCloseButton = showCloseButton,
-                    modifier = modifier
-                )
-            }
-            is LiveStreamState.Error -> {
-                ErrorContent(
-                    errorMessage = currentState.errorMessage,
-                    errorCode = currentState.errorCode,
-                    retryable = currentState.retryable,
-                    retryText = errorRetryText,
-                    onRetry = { viewModel.retry() },
-                    modifier = modifier
-                )
-            }
+    val currentState = streamState
+    when (currentState) {
+        is LiveStreamState.Loading -> {
+            LoadingContent(
+                liveTitle = liveTitle,
+                liveDescription = liveDescription,
+                loadingText = loadingText,
+                modifier = modifier
+            )
+        }
+        is LiveStreamState.PreLive -> {
+            PreLiveContent(
+                mediaType = currentState.mediaType,
+                mediaUrl = currentState.mediaUrl,
+                mediaTitle = currentState.mediaTitle,
+                mediaLoop = currentState.mediaLoop,
+                modifier = modifier
+            )
+        }
+        is LiveStreamState.Live -> {
+            LiveStreamContent(
+                viewModel = viewModel,
+                title = liveTitle.ifEmpty { currentState.title },
+                description = liveDescription.ifEmpty { currentState.description },
+                showOverlay = showOverlay,
+                showPlayerControls = showPlayerControls,
+                onTap = { viewModel.toggleOverlay() },
+                onClose = onClose,
+                showCloseButton = showCloseButton,
+                modifier = modifier
+            )
+        }
+        is LiveStreamState.Error -> {
+            ErrorContent(
+                errorMessage = currentState.errorMessage,
+                errorCode = currentState.errorCode,
+                retryable = currentState.retryable,
+                retryText = errorRetryText,
+                onRetry = { viewModel.retry() },
+                modifier = modifier
+            )
         }
     }
 }
 
 @Composable
 private fun PreLiveContent(
-    imageUrl: String,
-    scheduledTime: Date,
+    mediaType: MediaType,
+    mediaUrl: String,
+    mediaTitle: String,
+    mediaLoop: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val dateFormat = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault())
-    
-    Box(
-        modifier = modifier
-            .background(Color.Black)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(24.dp)
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(imageUrl),
-                contentDescription = "Live stream preview",
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .aspectRatio(16f / 9f),
-                contentScale = ContentScale.Fit
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text(
-                text = "Live Stream Starting Soon",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Text(
-                text = dateFormat.format(scheduledTime),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White.copy(alpha = 0.8f)
-            )
+
+    when (mediaType) {
+        MediaType.IMAGE -> {
+            // Default image display
+            Box(
+                modifier = modifier
+                    .background(Color.Black)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(24.dp)
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(mediaUrl),
+                        contentDescription = "Live stream preview",
+                        modifier = modifier,
+                        contentScale = ContentScale.Fit
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    if (mediaTitle.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.4f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = mediaTitle,
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        MediaType.VIDEO -> {
+            // Video playback (placeholder for now - would need video player implementation)
+            Box(
+                modifier = modifier
+                    .background(Color.Black)
+                    .fillMaxSize()
+            ) {
+                // TODO: Implement video player for mediaUrl
+                // For now, show placeholder
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Gray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Video Preview\n(Not implemented yet)",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                // Title overlay for VIDEO_TITLE
+                if (mediaTitle.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.4f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = mediaTitle,
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
         }
     }
 }

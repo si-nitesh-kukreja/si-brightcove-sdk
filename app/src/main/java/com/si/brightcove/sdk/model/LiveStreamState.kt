@@ -3,6 +3,14 @@ package com.si.brightcove.sdk.model
 import java.util.Date
 
 /**
+ * Media type for pre-live content.
+ */
+enum class MediaType {
+    IMAGE,
+    VIDEO,
+}
+
+/**
  * Represents the state of a live stream.
  */
 sealed class LiveStreamState {
@@ -10,21 +18,25 @@ sealed class LiveStreamState {
      * Loading state: SDK is checking stream availability.
      */
     object Loading : LiveStreamState()
-    
+
     /**
      * Pre-live state: Stream has not started yet.
-     * 
-     * @param imageUrl URL for the preview image
-     * @param scheduledTime Date/time when the live stream is scheduled to start
+     *
+     * @param mediaType Type of media to display (image, video, etc.)
+     * @param mediaUrl URL for the media content
+     * @param mediaTitle Title for the media
+     * @param mediaLoop Whether to loop the media
      */
     data class PreLive(
-        val imageUrl: String,
-        val scheduledTime: Date
+        val mediaType: MediaType = MediaType.IMAGE,
+        val mediaUrl: String = "",
+        val mediaTitle: String = "",
+        val mediaLoop: Boolean = true
     ) : LiveStreamState()
-    
+
     /**
      * Live state: Stream is currently active.
-     * 
+     *
      * @param title Title of the live stream
      * @param description Short description of the live stream
      */
@@ -32,10 +44,10 @@ sealed class LiveStreamState {
         val title: String,
         val description: String
     ) : LiveStreamState()
-    
+
     /**
      * Error state: An error occurred while loading or playing the stream.
-     * 
+     *
      * @param errorMessage Human-readable error message
      * @param errorCode Error code for programmatic handling
      * @param retryable Whether the error can be retried

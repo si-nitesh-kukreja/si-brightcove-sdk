@@ -3,12 +3,10 @@ package com.si.brightcove.sdk
 import android.annotation.SuppressLint
 import android.content.Context
 import com.brightcove.player.edge.Catalog
-import com.brightcove.player.edge.VideoListener
 import com.brightcove.player.event.EventEmitter
-import com.brightcove.player.event.EventType
-import com.brightcove.player.model.Video
 import com.brightcove.player.view.BrightcoveExoPlayerVideoView
 import com.si.brightcove.sdk.analytics.AnalyticsManager
+import com.si.brightcove.sdk.config.ConfigurationManager
 import com.si.brightcove.sdk.config.SDKConfig
 import com.si.brightcove.sdk.model.EventType as SdkEventType
 import com.si.brightcove.sdk.model.Environment as SdkEnvironment
@@ -45,10 +43,12 @@ object BrightcoveLiveStreamSDK {
 
     /**
      * Initialize the SDK with required parameters.
-     * 
+     *
      * @param context Application context
      * @param eventType Required event type (MOBILE/CAMERA)
      * @param environment Required environment (PROD/NON_PROD)
+     * @param locale Required locale identifier for configuration
+     * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
      * @param videoId Brightcove Video ID for live stream (optional override, leave empty if not used)
      * @param accountId Optional override for Brightcove Account ID
      * @param policyKey Optional override for Brightcove Policy Key
@@ -60,15 +60,19 @@ object BrightcoveLiveStreamSDK {
         context: Context,
         eventType: SdkEventType,
         environment: SdkEnvironment,
+        locale: String,
+        state: Boolean,
         videoId: String = "",
         accountId: String? = null,
         policyKey: String? = null,
-        debug: Boolean = false
+        debug: Boolean
     ) {
         initialize(
             context = context,
             eventType = eventType,
             environment = environment,
+            locale = locale,
+            state = state,
             videoId = videoId,
             accountId = accountId,
             policyKey = policyKey,
@@ -82,10 +86,12 @@ object BrightcoveLiveStreamSDK {
     
     /**
      * Initialize the SDK with advanced configuration options.
-     * 
+     *
      * @param context Application context
      * @param eventType Required event type (MOBILE/CAMERA)
      * @param environment Required environment (PROD/NON_PROD)
+     * @param locale Required locale identifier for configuration
+     * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
      * @param videoId Brightcove Video ID for live stream (optional override, leave empty if not used)
      * @param accountId Optional override for Brightcove Account ID
      * @param policyKey Optional override for Brightcove Policy Key
@@ -101,6 +107,8 @@ object BrightcoveLiveStreamSDK {
         context: Context,
         eventType: SdkEventType,
         environment: SdkEnvironment,
+        locale: String,
+        state: Boolean,
         videoId: String = "",
         accountId: String? = null,
         policyKey: String? = null,
@@ -113,14 +121,54 @@ object BrightcoveLiveStreamSDK {
         if (isInitialized) {
             throw IllegalStateException("BrightcoveLiveStreamSDK is already initialized. Initialize only once per app lifecycle.")
         }
-        
+
         val appContext = context.applicationContext
-        
+
         val resolvedCredentials = resolveCredentials(eventType, environment, accountId, policyKey, videoId)
         val resolvedAccountId = resolvedCredentials.first
         val resolvedPolicyKey = resolvedCredentials.second
         val resolvedVideoId = resolvedCredentials.third
-        
+
+        // Load configuration if state=false (config-driven behavior)
+        var configVideoId = ""
+        var configState = ""
+        var configMediaType = com.si.brightcove.sdk.model.MediaType.IMAGE
+        var configMediaUrl = ""
+        var configMediaTitle = ""
+        var configMediaLoop = true
+
+        if (!state) {
+            val configManager = ConfigurationManager.getInstance()
+            val configResult = configManager.loadConfiguration(appContext, debug)
+
+            if (configResult.isSuccess) {
+                val streamConfigResult = configManager.getConfiguration(eventType, environment, locale)
+                if (streamConfigResult.isSuccess) {
+                    val streamConfig = streamConfigResult.getOrThrow()
+                    configVideoId = streamConfig.videoId
+                    configState = streamConfig.state
+                    configMediaType = streamConfig.mediaType
+                    configMediaUrl = streamConfig.mediaUrl
+                    configMediaTitle = streamConfig.mediaTitle
+                    configMediaLoop = streamConfig.mediaLoop
+
+                    if (debug) {
+                        android.util.Log.d("BrightcoveSDK", "Loaded configuration: videoId=$configVideoId, state=$configState, mediaType=$configMediaType")
+                    }
+                } else {
+                    if (debug) {
+                        android.util.Log.w("BrightcoveSDK", "Failed to get configuration for locale '$locale': ${streamConfigResult.exceptionOrNull()?.message}")
+                    }
+                    // Continue with default values
+                }
+            } else {
+                if (debug) {
+                    android.util.Log.w("BrightcoveSDK", "Failed to load configuration: ${configResult.exceptionOrNull()?.message}")
+                }
+                // Continue with default values
+            }
+        }
+
         sdkConfig = SDKConfig(
             accountId = resolvedAccountId,
             policyKey = resolvedPolicyKey,
@@ -131,7 +179,15 @@ object BrightcoveLiveStreamSDK {
             pollingIntervalMs = pollingIntervalMs,
             autoRetryOnError = autoRetryOnError,
             maxRetryAttempts = maxRetryAttempts,
-            retryBackoffMultiplier = retryBackoffMultiplier
+            retryBackoffMultiplier = retryBackoffMultiplier,
+            locale = locale,
+            useConfig = state,
+            configVideoId = configVideoId,
+            configState = configState,
+            configMediaType = configMediaType,
+            configMediaUrl = configMediaUrl,
+            configMediaTitle = configMediaTitle,
+            configMediaLoop = configMediaLoop
         )
         
         analyticsManager = AnalyticsManager(appContext, debug)
@@ -212,21 +268,21 @@ object BrightcoveLiveStreamSDK {
         videoIdOverride: String?
     ): Triple<String, String, String> {
         val mappedAccountId = when {
-            eventType == SdkEventType.MOBILE && environment == SdkEnvironment.PROD -> ACCOUNT_ID_MOBILE_PROD
-            eventType == SdkEventType.CAMERA && environment == SdkEnvironment.PROD -> ACCOUNT_ID_CAMERA_PROD
-            eventType == SdkEventType.MOBILE && environment == SdkEnvironment.NON_PROD -> ACCOUNT_ID_MOBILE_NON_PROD
+            eventType == SdkEventType.mobile && environment == SdkEnvironment.prod -> ACCOUNT_ID_MOBILE_PROD
+            eventType == SdkEventType.camera && environment == SdkEnvironment.prod -> ACCOUNT_ID_CAMERA_PROD
+            eventType == SdkEventType.mobile && environment == SdkEnvironment.nonProd -> ACCOUNT_ID_MOBILE_NON_PROD
             else -> ACCOUNT_ID_CAMERA_NON_PROD
         }
         val mappedPolicyKey = when {
-            eventType == SdkEventType.MOBILE && environment == SdkEnvironment.PROD -> POLICY_KEY_MOBILE_PROD
-            eventType == SdkEventType.CAMERA && environment == SdkEnvironment.PROD -> POLICY_KEY_CAMERA_PROD
-            eventType == SdkEventType.MOBILE && environment == SdkEnvironment.NON_PROD -> POLICY_KEY_MOBILE_NON_PROD
+            eventType == SdkEventType.mobile && environment == SdkEnvironment.prod -> POLICY_KEY_MOBILE_PROD
+            eventType == SdkEventType.camera && environment == SdkEnvironment.prod -> POLICY_KEY_CAMERA_PROD
+            eventType == SdkEventType.mobile && environment == SdkEnvironment.nonProd -> POLICY_KEY_MOBILE_NON_PROD
             else -> POLICY_KEY_CAMERA_NON_PROD
         }
         val mappedVideoId = when {
-            eventType == SdkEventType.MOBILE && environment == SdkEnvironment.PROD -> VIDEO_ID_MOBILE_PROD
-            eventType == SdkEventType.CAMERA && environment == SdkEnvironment.PROD -> VIDEO_ID_CAMERA_PROD
-            eventType == SdkEventType.MOBILE && environment == SdkEnvironment.NON_PROD -> VIDEO_ID_MOBILE_NON_PROD
+            eventType == SdkEventType.mobile && environment == SdkEnvironment.prod -> VIDEO_ID_MOBILE_PROD
+            eventType == SdkEventType.camera && environment == SdkEnvironment.prod -> VIDEO_ID_CAMERA_PROD
+            eventType == SdkEventType.mobile && environment == SdkEnvironment.nonProd -> VIDEO_ID_MOBILE_NON_PROD
             else -> VIDEO_ID_CAMERA_NON_PROD
         }
         

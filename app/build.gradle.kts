@@ -87,7 +87,10 @@ dependencies {
     
     // Coil for image loading
     implementation(libs.coil.compose)
-    
+
+    // Gson for JSON parsing
+    implementation(libs.gson)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

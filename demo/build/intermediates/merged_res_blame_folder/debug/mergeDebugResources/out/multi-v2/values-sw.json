@@ -4,24 +4,58 @@
             "outputFile": "com.si.brightcove.demo-mergeDebugResources-44:/values-sw/values-sw.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\31364c226d7f5d688101a2ca4371a8cd\\transformed\\core-1.17.0\\res\\values-sw\\values-sw.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\cf0f3f38799f9da79dc141b88d9e2211\\transformed\\foundation-release\\res\\values-sw\\values-sw.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,149,251,348,449,556,663,778",
-                        "endColumns": "93,101,96,100,106,106,114,100",
-                        "endOffsets": "144,246,343,444,551,658,773,874"
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,138,239",
+                        "endColumns": "82,100,102",
+                        "endOffsets": "133,234,337"
                     },
                     "to": {
-                        "startLines": "20,21,22,23,24,25,26,154",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "839,933,1035,1132,1233,1340,1447,13224",
-                        "endColumns": "93,101,96,100,106,106,114,100",
-                        "endOffsets": "928,1030,1127,1228,1335,1442,1557,13320"
+                        "startLines": "19,158,159",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "756,13593,13694",
+                        "endColumns": "82,100,102",
+                        "endOffsets": "834,13689,13792"
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\9947fa311f82f7f106c1477fee818b87\\transformed\\material3-release\\res\\values-sw\\values-sw.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\03d5f9ecd16e83f34a31411f8fb92ae1\\transformed\\extension-mediasession-2.19.1\\res\\values-sw\\values-sw.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,134,218",
+                        "endColumns": "78,83,78",
+                        "endOffsets": "129,213,292"
+                    },
+                    "to": {
+                        "startLines": "66,67,68",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "4718,4797,4881",
+                        "endColumns": "78,83,78",
+                        "endOffsets": "4792,4876,4955"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\ca2017b05ac6cb28c21bcfb46e12fd09\\transformed\\exoplayer-core-2.19.1\\res\\values-sw\\values-sw.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,118,177,239,306,384,465,552,634",
+                        "endColumns": "62,58,61,66,77,80,86,81,69",
+                        "endOffsets": "113,172,234,301,379,460,547,629,699"
+                    },
+                    "to": {
+                        "startLines": "56,57,58,59,60,61,62,63,64",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4016,4079,4138,4200,4267,4345,4426,4513,4595",
+                        "endColumns": "62,58,61,66,77,80,86,81,69",
+                        "endOffsets": "4074,4133,4195,4262,4340,4421,4508,4590,4660"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\719efd21a66610022df11aa7bdc049f2\\transformed\\material3-release\\res\\values-sw\\values-sw.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +72,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\663c66d9edee34b77017dec83e1b5282\\transformed\\exoplayer-ui-2.19.1\\res\\values-sw\\values-sw.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\366de1158498a71a1606ca29344f3ecc\\transformed\\core-1.17.0\\res\\values-sw\\values-sw.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,149,251,348,449,556,663,778",
+                        "endColumns": "93,101,96,100,106,106,114,100",
+                        "endOffsets": "144,246,343,444,551,658,773,874"
+                    },
+                    "to": {
+                        "startLines": "20,21,22,23,24,25,26,154",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "839,933,1035,1132,1233,1340,1447,13224",
+                        "endColumns": "93,101,96,100,106,106,114,100",
+                        "endOffsets": "928,1030,1127,1228,1335,1442,1557,13320"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\5dd28cd52de86af687e485216a470a7a\\transformed\\exoplayer-ui-2.19.1\\res\\values-sw\\values-sw.xml",
                     "from": {
                         "startLines": "2,11,15,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -57,41 +108,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\7099f9769e57b05c5ddb502a639bf71c\\transformed\\foundation-release\\res\\values-sw\\values-sw.xml",
-                    "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,138,239",
-                        "endColumns": "82,100,102",
-                        "endOffsets": "133,234,337"
-                    },
-                    "to": {
-                        "startLines": "19,158,159",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "756,13593,13694",
-                        "endColumns": "82,100,102",
-                        "endOffsets": "834,13689,13792"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\96f7bbbc22cb29f912c41246b6305890\\transformed\\extension-mediasession-2.19.1\\res\\values-sw\\values-sw.xml",
-                    "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,134,218",
-                        "endColumns": "78,83,78",
-                        "endOffsets": "129,213,292"
-                    },
-                    "to": {
-                        "startLines": "66,67,68",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "4718,4797,4881",
-                        "endColumns": "78,83,78",
-                        "endOffsets": "4792,4876,4955"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\b96312f0ed4782debb8c38e47376bdd4\\transformed\\ui-release\\res\\values-sw\\values-sw.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\4bcaf2f5f9ee83161b2b4e95be911ab3\\transformed\\ui-release\\res\\values-sw\\values-sw.xml",
                     "from": {
                         "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -105,23 +122,6 @@
                         "startOffsets": "1562,1656,1737,1838,1939,6050,6131,12492,12583,12665,12750,12837,12911,12995,13070,13147,13325,13402,13472",
                         "endColumns": "93,80,100,100,85,80,100,90,81,84,86,73,83,74,76,76,76,69,120",
                         "endOffsets": "1651,1732,1833,1934,2020,6126,6227,12578,12660,12745,12832,12906,12990,13065,13142,13219,13397,13467,13588"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\26f9c8068486af0a3e1657621a5eb8fb\\transformed\\exoplayer-core-2.19.1\\res\\values-sw\\values-sw.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,118,177,239,306,384,465,552,634",
-                        "endColumns": "62,58,61,66,77,80,86,81,69",
-                        "endOffsets": "113,172,234,301,379,460,547,629,699"
-                    },
-                    "to": {
-                        "startLines": "56,57,58,59,60,61,62,63,64",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "4016,4079,4138,4200,4267,4345,4426,4513,4595",
-                        "endColumns": "62,58,61,66,77,80,86,81,69",
-                        "endOffsets": "4074,4133,4195,4262,4340,4421,4508,4590,4660"
                     }
                 }
             ]
