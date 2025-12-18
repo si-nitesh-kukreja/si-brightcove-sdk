@@ -1,24 +1,27 @@
 package com.si.brightcove.sdk.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.ImageLoader
+import coil.request.SuccessResult
+import android.graphics.drawable.BitmapDrawable
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
 import com.si.brightcove.sdk.BrightcoveLiveStreamSDK
@@ -34,6 +37,9 @@ import com.si.brightcove.sdk.player.BrightcovePlayerView
 import com.si.brightcove.sdk.viewmodel.LiveStreamViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import rememberDominantColor
 
 /**
  * Main public UI entry point for the Live Streaming SDK.
@@ -82,8 +88,6 @@ fun LiveStreamScreen(
     val policyKey: String? = null
     val videoId = ""
     val errorRetryText = "Retry"
-    val backgroundColor: Color = Color.Black
-    val preLiveScheduledTime: Date? = null
     val showCloseButton = false
     val loadingText = "Loading..."
     val state = false
@@ -189,6 +193,8 @@ fun LiveStreamScreen(
     }
 }
 
+
+
 @Composable
 private fun PreLiveContent(
     mediaType: MediaType,
@@ -200,54 +206,66 @@ private fun PreLiveContent(
 
     when (mediaType) {
         MediaType.IMAGE -> {
-            // Default image display
+            // Extract dominant color from image
+            val dominantColor = rememberDominantColor(mediaUrl)
+            
+            // Image display that fills the whole screen
             Box(
                 modifier = modifier
                     .background(Color.Black)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize()
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(24.dp)
-                ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(mediaUrl),
-                        contentDescription = "Live stream preview",
-                        modifier = modifier,
-                        contentScale = ContentScale.Fit
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-                    if (mediaTitle.isNotEmpty()) {
-                        Box(
+                // Image that fills the entire screen
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(mediaUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Live stream preview",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop // Fill the entire screen
+                )
+                
+                // Title overlay at bottom center
+                if (mediaTitle.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 32.dp),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Text(
+                            text = mediaTitle,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = dominantColor,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
                             modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.4f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = mediaTitle,
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                                .padding(horizontal = 16.dp)
+                                .background(
+                                    Color.Black.copy(alpha = 0.5f),
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
                     }
                 }
             }
         }
 
         MediaType.VIDEO -> {
-            // Video playback (placeholder for now - would need video player implementation)
+            // Try to extract color from video thumbnail (if available) or use fallback
+            // For video, we attempt to extract from thumbnail URL or use a default color
+            val dominantColor = rememberDominantColor(mediaUrl)
+            
+            // Video display that fills the whole screen
             Box(
                 modifier = modifier
                     .background(Color.Black)
                     .fillMaxSize()
             ) {
                 // TODO: Implement video player for mediaUrl
-                // For now, show placeholder
+                // For now, show placeholder that fills the screen
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -262,20 +280,27 @@ private fun PreLiveContent(
                     )
                 }
 
-                // Title overlay for VIDEO_TITLE
+                // Title overlay at bottom center
                 if (mediaTitle.isNotEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.4f)),
-                        contentAlignment = Alignment.Center
+                            .padding(bottom = 32.dp),
+                        contentAlignment = Alignment.BottomCenter
                     ) {
                         Text(
                             text = mediaTitle,
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = Color.White,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = dominantColor,
                             fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .background(
+                                    Color.Black.copy(alpha = 0.5f),
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
                 }

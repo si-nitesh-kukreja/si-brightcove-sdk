@@ -188,7 +188,32 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                 val config = BrightcoveLiveStreamSDK.getConfig()
                 
                 // If using config-driven behavior, check config state first
-                if (!config.useConfig && config.configState.isNotBlank()) {
+                if (!config.useConfig) {
+                    // Config-driven behavior is enabled
+                    if (config.configState.isBlank()) {
+                        // Config state is missing/empty - this means config failed to load
+                        // Show error or PreLive with empty values, don't check Brightcove video
+                        if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                            android.util.Log.w("BrightcoveSDK", "Config-driven mode but configState is blank - configuration may be missing or invalid")
+                        }
+                        
+                        // Show PreLive with available config values (may be empty)
+                        if (_streamState.value is LiveStreamState.Loading) {
+//                            _streamState.value = LiveStreamState.PreLive(
+//                                mediaType = config.configMediaType,
+//                                mediaUrl = config.configMediaUrl,
+//                                mediaTitle = config.configMediaTitle,
+//                                mediaLoop = config.configMediaLoop
+//                            )
+                            _streamState.value = LiveStreamState.Error(
+                                errorMessage = "Something Went Wrong",
+                                errorCode = SDKError.UNKNOWN_ERROR,
+                                retryable = false
+                            )
+                        }
+                        return@launch // Don't check Brightcove video when config is missing
+                    }
+                    
                     val configStateLower = config.configState.lowercase().trim()
                     
                     when (configStateLower) {
@@ -225,10 +250,19 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
 //                            return@launch
 //                        }
                         else -> {
-                            // Unknown state, continue with normal flow
+                            // Unknown state, show PreLive with config values instead of checking Brightcove
                             if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                                android.util.Log.d("BrightcoveSDK", "Unknown config state: $configStateLower, continuing with normal flow")
+                                android.util.Log.w("BrightcoveSDK", "Unknown config state: $configStateLower, showing PreLive with config values")
                             }
+                            if (_streamState.value is LiveStreamState.Loading) {
+                                _streamState.value = LiveStreamState.PreLive(
+                                    mediaType = config.configMediaType,
+                                    mediaUrl = config.configMediaUrl,
+                                    mediaTitle = config.configMediaTitle,
+                                    mediaLoop = config.configMediaLoop
+                                )
+                            }
+                            return@launch // Don't check Brightcove video for unknown config state
                         }
                     }
                 }
