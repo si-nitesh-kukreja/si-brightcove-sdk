@@ -4,24 +4,7 @@
             "outputFile": "com.si.brightcove.demo-mergeDebugResources-44:/values-as/values-as.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\cf0f3f38799f9da79dc141b88d9e2211\\transformed\\foundation-release\\res\\values-as\\values-as.xml",
-                    "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,155,240",
-                        "endColumns": "99,84,87",
-                        "endOffsets": "150,235,323"
-                    },
-                    "to": {
-                        "startLines": "2,87,88",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "105,8965,9050",
-                        "endColumns": "99,84,87",
-                        "endOffsets": "200,9045,9133"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\4bcaf2f5f9ee83161b2b4e95be911ab3\\transformed\\ui-release\\res\\values-as\\values-as.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\ca25948d8f4c9b215fcb20718f1c8896\\transformed\\ui-release\\res\\values-as\\values-as.xml",
                     "from": {
                         "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +21,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\366de1158498a71a1606ca29344f3ecc\\transformed\\core-1.17.0\\res\\values-as\\values-as.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\ee76e9fe89a8f98e9328824eebbbeb47\\transformed\\foundation-release\\res\\values-as\\values-as.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,155,240",
+                        "endColumns": "99,84,87",
+                        "endOffsets": "150,235,323"
+                    },
+                    "to": {
+                        "startLines": "2,87,88",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "105,8965,9050",
+                        "endColumns": "99,84,87",
+                        "endOffsets": "200,9045,9133"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\34d0d62fc32178327637567ddc9aaf9d\\transformed\\core-1.17.0\\res\\values-as\\values-as.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -55,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\719efd21a66610022df11aa7bdc049f2\\transformed\\material3-release\\res\\values-as\\values-as.xml",
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\9c20aebfd97d02d60f1cde3c99fee840\\transformed\\material3-release\\res\\values-as\\values-as.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

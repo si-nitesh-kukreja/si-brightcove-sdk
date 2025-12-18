@@ -2,19 +2,32 @@ package com.si.brightcove.sdk.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.animation.core.*
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -257,28 +270,19 @@ private fun PreLiveContent(
             // Try to extract color from video thumbnail (if available) or use fallback
             // For video, we attempt to extract from thumbnail URL or use a default color
             val dominantColor = rememberDominantColor(mediaUrl)
-            
+
             // Video display that fills the whole screen
             Box(
                 modifier = modifier
                     .background(Color.Black)
                     .fillMaxSize()
             ) {
-                // TODO: Implement video player for mediaUrl
-                // For now, show placeholder that fills the screen
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Gray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Video Preview\n(Not implemented yet)",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                // Video player that fills the screen
+                VideoPlayer(
+                    videoUrl = mediaUrl,
+                    loop = mediaLoop,
+                    modifier = Modifier.fillMaxSize()
+                )
 
                 // Title overlay at bottom center
                 if (mediaTitle.isNotEmpty()) {
@@ -318,53 +322,188 @@ private fun LoadingContent(
 ) {
     Box(
         modifier = modifier
-            .background(Color.Black)
             .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF0F0F23), // Dark blue-black
+                        Color(0xFF1A1A2E), // Slightly lighter blue-black
+                        Color(0xFF0F0F23)  // Back to dark
+                    )
+                )
+            )
     ) {
+        // Animated background particles effect
+        AnimatedParticlesBackground()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Live Title
+            // Live Title with glow effect
             if (liveTitle.isNotEmpty()) {
                 Text(
                     text = liveTitle,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontSize = 32.sp,
+                        letterSpacing = 1.sp
+                    ),
                     color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .shadow(
+                            elevation = 8.dp,
+                            spotColor = Color(0xFF00D4FF),
+                            ambientColor = Color(0xFF00D4FF)
+                        )
                 )
             }
-            
-            // Live Description
+
+            // Live Description with subtle styling
             if (liveDescription.isNotEmpty()) {
                 Text(
                     text = liveDescription,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White.copy(alpha = 0.9f),
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 18.sp,
+                        lineHeight = 24.sp
+                    ),
+                    color = Color.White.copy(alpha = 0.85f),
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(bottom = 48.dp)
+                        .padding(horizontal = 16.dp)
                 )
             }
-            
-            // Small loader with text
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.size(24.dp), // Small loader
-                    strokeWidth = 2.dp
-                )
-                Text(
-                    text = loadingText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.8f)
-                )
-            }
+
+            // Enhanced loading indicator with pulse animation
+            LoadingIndicatorWithPulse(loadingText)
         }
+    }
+}
+
+@Composable
+private fun AnimatedParticlesBackground() {
+    val infiniteTransition = rememberInfiniteTransition(label = "particles")
+
+    val particleOffset1 = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(8000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ), label = "particle1"
+    )
+
+    val particleOffset2 = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(6000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ), label = "particle2"
+    )
+
+    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+        val particleSize = 2.dp.toPx()
+
+        // Draw floating particles
+        drawCircle(
+            color = Color.White.copy(alpha = 0.1f),
+            radius = particleSize,
+            center = Offset(particleOffset1.value % size.width, size.height * 0.3f)
+        )
+
+        drawCircle(
+            color = Color(0xFF00D4FF).copy(alpha = 0.15f),
+            radius = particleSize * 1.5f,
+            center = Offset(particleOffset2.value % size.width, size.height * 0.7f)
+        )
+
+        drawCircle(
+            color = Color.White.copy(alpha = 0.08f),
+            radius = particleSize * 0.8f,
+            center = Offset((particleOffset1.value * 0.7f) % size.width, size.height * 0.5f)
+        )
+    }
+}
+
+@Composable
+private fun LoadingIndicatorWithPulse(loadingText: String) {
+    val infiniteTransition = rememberInfiniteTransition(label = "loading")
+
+    val pulseScale = infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse
+        ), label = "pulse"
+    )
+
+    val glowAlpha = infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse
+        ), label = "glow"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Pulsing loading indicator with glow
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(80.dp)
+        ) {
+            // Glow effect
+            CircularProgressIndicator(
+                progress = { 1f },
+                modifier = Modifier
+                    .size(80.dp * pulseScale.value)
+                    .alpha(glowAlpha.value),
+                color = Color(0xFF00D4FF).copy(alpha = 0.3f),
+                strokeWidth = 2.dp,
+                trackColor = Color.Transparent
+            )
+
+            // Main loading indicator
+            CircularProgressIndicator(
+                modifier = Modifier.size(60.dp),
+                color = Color(0xFF00D4FF),
+                strokeWidth = 4.dp,
+                trackColor = Color.White.copy(alpha = 0.2f)
+            )
+
+            // Inner accent ring
+            CircularProgressIndicator(
+                modifier = Modifier.size(40.dp),
+                color = Color.White,
+                strokeWidth = 2.dp,
+                trackColor = Color.Transparent
+            )
+        }
+
+        // Loading text with subtle animation
+        Text(
+            text = loadingText,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = 16.sp,
+                letterSpacing = 0.5.sp
+            ),
+            color = Color.White.copy(alpha = 0.9f),
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.alpha(glowAlpha.value)
+        )
     }
 }
 
@@ -379,43 +518,244 @@ private fun ErrorContent(
 ) {
     Box(
         modifier = modifier
-            .background(Color.Black)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(24.dp)
-        ) {
-            Text(
-                text = "Error",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF2D1B69), // Deep purple
+                        Color(0xFF11998E), // Teal
+                        Color(0xFF2D1B69)  // Back to purple
+                    )
+                )
             )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
+    ) {
+        // Animated error background effect
+        ErrorBackgroundEffect()
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Error icon with pulse animation
+            ErrorIconWithPulse()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Error title with glow effect
+            Text(
+                text = "Oops! Something went wrong",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontSize = 28.sp,
+                    letterSpacing = 0.5.sp
+                ),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .shadow(
+                        elevation = 8.dp,
+                        spotColor = Color(0xFFFF6B6B),
+                        ambientColor = Color(0xFFFF6B6B)
+                    )
+            )
+
+            // Error message with better styling
             Text(
                 text = errorMessage,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
-                modifier = Modifier.padding(horizontal = 16.dp)
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 22.sp
+                ),
+                color = Color.White.copy(alpha = 0.85f),
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 8.dp)
             )
-            
+
+            // Error code display (subtle)
+            Text(
+                text = "Error Code: ${errorCode.name}",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 12.sp,
+                    letterSpacing = 0.5.sp
+                ),
+                color = Color.White.copy(alpha = 0.6f),
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = if (retryable) 32.dp else 0.dp)
+            )
+
+            // Enhanced retry button
             if (retryable) {
-                Spacer(modifier = Modifier.height(24.dp))
-                Button(
-                    onClick = onRetry,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    )
-                ) {
-                    Text(text = retryText)
-                }
+                EnhancedRetryButton(retryText, onRetry)
             }
+        }
+    }
+}
+
+@Composable
+private fun ErrorBackgroundEffect() {
+    val infiniteTransition = rememberInfiniteTransition(label = "error_background")
+
+    val waveOffset = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ), label = "wave"
+    )
+
+    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+        val waveHeight = size.height * 0.1f
+
+        // Draw subtle wave pattern
+        for (i in 0..5) {
+            val y = size.height * 0.2f + i * size.height * 0.15f
+            val offset = (waveOffset.value + i * 200f) % size.width
+
+            // Draw wave-like patterns
+            drawCircle(
+                color = Color(0xFFFF6B6B).copy(alpha = 0.05f),
+                radius = 40f + i * 10f,
+                center = Offset(offset, y)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ErrorIconWithPulse() {
+    val infiniteTransition = rememberInfiniteTransition(label = "error_icon")
+
+    val pulseScale = infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse
+        ), label = "pulse"
+    )
+
+    val rotation = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse
+        ), label = "rotation"
+    )
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(100.dp)
+    ) {
+        // Outer glow ring
+        androidx.compose.foundation.Canvas(
+            modifier = Modifier
+                .size(100.dp * pulseScale.value)
+                .alpha(0.3f)
+        ) {
+            drawCircle(
+                color = Color(0xFFFF6B6B),
+                radius = size.minDimension / 2
+            )
+        }
+
+        // Main error icon background
+        androidx.compose.foundation.Canvas(
+            modifier = Modifier
+                .size(80.dp)
+                .rotate(rotation.value)
+        ) {
+            drawCircle(
+                color = Color(0xFFFF6B6B).copy(alpha = 0.9f),
+                radius = size.minDimension / 2
+            )
+        }
+
+        // Error symbol (X)
+        androidx.compose.foundation.Canvas(modifier = Modifier.size(60.dp)) {
+            val strokeWidth = 6f
+            val halfStroke = strokeWidth / 2
+
+            // Draw X symbol
+            drawLine(
+                color = Color.White,
+                start = Offset(halfStroke, halfStroke),
+                end = Offset(size.width - halfStroke, size.height - halfStroke),
+                strokeWidth = strokeWidth,
+                cap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
+
+            drawLine(
+                color = Color.White,
+                start = Offset(size.width - halfStroke, halfStroke),
+                end = Offset(halfStroke, size.height - halfStroke),
+                strokeWidth = strokeWidth,
+                cap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
+        }
+    }
+}
+
+@Composable
+private fun EnhancedRetryButton(retryText: String, onRetry: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val buttonScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = "button_scale"
+    )
+
+    Button(
+        onClick = onRetry,
+        modifier = Modifier
+            .scale(buttonScale)
+            .height(56.dp)
+            .shadow(
+                elevation = 12.dp,
+                spotColor = Color(0xFF4ECDC4),
+                ambientColor = Color(0xFF4ECDC4)
+            ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF4ECDC4),
+            contentColor = Color(0xFF2D1B69)
+        ),
+        shape = RoundedCornerShape(28.dp),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 8.dp,
+            pressedElevation = 4.dp
+        ),
+        interactionSource = interactionSource
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null,
+                tint = Color(0xFF2D1B69)
+            )
+            Text(
+                text = retryText,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+            )
         }
     }
 }

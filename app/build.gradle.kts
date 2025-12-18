@@ -70,21 +70,25 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    
+
     // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    
+
     // Lifecycle for ViewModel
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
-    
+
     // Brightcove SDK
     implementation(libs.android.sdk)
-    
+
+    // ExoPlayer for video playback
+    implementation(libs.exoplayer.core)
+    implementation(libs.exoplayer.ui)
+
     // Coil for image loading
     implementation(libs.coil.compose)
 
