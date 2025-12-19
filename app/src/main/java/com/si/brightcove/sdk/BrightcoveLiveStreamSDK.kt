@@ -10,6 +10,7 @@ import com.si.brightcove.sdk.config.ConfigurationManager
 import com.si.brightcove.sdk.config.SDKConfig
 import com.si.brightcove.sdk.model.EventType as SdkEventType
 import com.si.brightcove.sdk.model.Environment as SdkEnvironment
+import com.si.brightcove.sdk.ui.Logger
 
 /**
  * Main SDK initialization class.
@@ -153,17 +154,17 @@ object BrightcoveLiveStreamSDK {
                     configMediaLoop = streamConfig.mediaLoop
 
                     if (debug) {
-                        android.util.Log.d("BrightcoveSDK", "Loaded configuration: videoId=$configVideoId, state=$configState, mediaType=$configMediaType")
+                        Logger.d("Loaded configuration: videoId=$configVideoId, state=$configState, mediaType=$configMediaType")
                     }
                 } else {
                     if (debug) {
-                        android.util.Log.w("BrightcoveSDK", "Failed to get configuration for locale '$locale': ${streamConfigResult.exceptionOrNull()?.message}")
+                        Logger.w("Failed to get configuration for locale '$locale': ${streamConfigResult.exceptionOrNull()?.message}")
                     }
                     // Continue with default values
                 }
             } else {
                 if (debug) {
-                    android.util.Log.w("BrightcoveSDK", "Failed to load configuration: ${configResult.exceptionOrNull()?.message}")
+                    Logger.w("Failed to load configuration: ${configResult.exceptionOrNull()?.message}")
                 }
                 // Continue with default values
             }
@@ -212,16 +213,16 @@ object BrightcoveLiveStreamSDK {
                 constructor.isAccessible = true
                 standaloneEventEmitter = constructor.newInstance() as EventEmitter
                 if (debug) {
-                    android.util.Log.d("BrightcoveSDK", "Standalone EventEmitter created successfully using ${eventEmitterClass.simpleName}")
+                    Logger.d("Standalone EventEmitter created successfully using ${eventEmitterClass.simpleName}")
                 }
             } else {
                 if (debug) {
-                    android.util.Log.w("BrightcoveSDK", "Could not find EventEmitter implementation class - will try to get from player view when available")
+                    Logger.w("Could not find EventEmitter implementation class - will try to get from player view when available")
                 }
             }
         } catch (e: Exception) {
             if (debug) {
-                android.util.Log.e("BrightcoveSDK", "Failed to create standalone EventEmitter: ${e.message}", e)
+                Logger.e("Failed to create standalone EventEmitter: ${e.message}", e)
             }
         }
         
@@ -312,7 +313,7 @@ object BrightcoveLiveStreamSDK {
             eventEmitter = brightcoveVideoView?.eventEmitter
         } catch (e: Exception) {
             if (config.debug) {
-                android.util.Log.d("BrightcoveSDK", "Could not access EventEmitter from player view: ${e.message}")
+                Logger.d("Could not access EventEmitter from player view: ${e.message}")
             }
         }
         
@@ -320,23 +321,23 @@ object BrightcoveLiveStreamSDK {
         if (eventEmitter == null) {
             eventEmitter = standaloneEventEmitter
             if (config.debug && eventEmitter != null) {
-                android.util.Log.d("BrightcoveSDK", "Using standalone EventEmitter for Catalog creation")
+                Logger.d("Using standalone EventEmitter for Catalog creation")
             }
         }
         
         if (eventEmitter == null) {
             if (config.debug) {
-                android.util.Log.e("BrightcoveSDK", "No EventEmitter available - neither from player view nor standalone")
+                Logger.e("No EventEmitter available - neither from player view nor standalone")
             }
             return null
         }
         
         if (config.debug) {
-            android.util.Log.d("BrightcoveSDK", "Creating Catalog with AccountID: $")
+            Logger.d("Creating Catalog with AccountID: $")
         }
 
-        android.util.Log.d("BrightcoveSDK", "AccountID $accountId")
-        android.util.Log.d("BrightcoveSDK", "PolicyKey $policyKey")
+        Logger.d("AccountID $accountId")
+        Logger.d("PolicyKey $policyKey")
 
         return try {
             Catalog.Builder(eventEmitter, accountId)
@@ -345,7 +346,7 @@ object BrightcoveLiveStreamSDK {
                 .build()
         } catch (e: Exception) {
             if (config.debug) {
-                android.util.Log.e("BrightcoveSDK", "Failed to create Catalog", e)
+                Logger.e("Failed to create Catalog", e)
             }
             null
         }

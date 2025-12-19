@@ -16,6 +16,7 @@ import com.si.brightcove.sdk.model.LiveStreamState
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.model.SDKError
 import com.si.brightcove.sdk.ui.LiveStreamScreen
+import com.si.brightcove.sdk.ui.Logger
 
 /**
  * Main Activity for the demo app.
@@ -51,16 +52,16 @@ class MainActivity : ComponentActivity() {
     private fun handleStateChange(state: LiveStreamState) {
         when (state) {
             is LiveStreamState.Loading -> {
-                android.util.Log.d("BrightcoveSDK", "State: Loading stream...")
+                Logger.d("State: Loading stream...", "DemoApp")
             }
             is LiveStreamState.PreLive -> {
-                android.util.Log.d("BrightcoveSDK", "State: Pre-Live - Scheduled: ${state.mediaTitle}")
+                Logger.d("State: Pre-Live - Scheduled: ${state.mediaTitle}", "DemoApp")
             }
             is LiveStreamState.Live -> {
-                android.util.Log.d("BrightcoveSDK", "State: Live - Title: ${state.title} Description : ${state.description}")
+                Logger.d("State: Live - Title: ${state.title} Description : ${state.description}", "DemoApp")
             }
             is LiveStreamState.Error -> {
-                android.util.Log.e("BrightcoveSDK", "State: Error - ${state.errorMessage} (${state.errorCode})")
+                Logger.e("State: Error - ${state.errorMessage} (${state.errorCode})", "DemoApp")
             }
         }
     }
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
      * Handle errors.
      */
     private fun handleError(errorMessage: String, errorCode: SDKError) {
-        android.util.Log.e("BrightcoveSDK", "Error: $errorMessage (Code: $errorCode)")
+        Logger.e("Error: $errorMessage (Code: $errorCode)", "DemoApp")
         
         // You can show a toast, snackbar, or custom error UI here
         when (errorCode) {
@@ -97,28 +98,28 @@ class MainActivity : ComponentActivity() {
     private fun handlePlayerEvent(event: PlayerEvent) {
         when (event) {
             is PlayerEvent.PlaybackStarted -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Playback Started")
+                Logger.d("Player Event: Playback Started", "DemoApp")
             }
             is PlayerEvent.PlaybackPaused -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Playback Paused")
+                Logger.d("Player Event: Playback Paused", "DemoApp")
             }
             is PlayerEvent.PlaybackResumed -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Playback Resumed")
+                Logger.d("Player Event: Playback Resumed", "DemoApp")
             }
             is PlayerEvent.Buffering -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Buffering")
+                Logger.d("Player Event: Buffering", "DemoApp")
             }
             is PlayerEvent.BufferingComplete -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Buffering Complete")
+                Logger.d("Player Event: Buffering Complete", "DemoApp")
             }
             is PlayerEvent.VideoLoaded -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Video Loaded")
+                Logger.d("Player Event: Video Loaded", "DemoApp")
             }
             is PlayerEvent.PlaybackCompleted -> {
-                android.util.Log.d("BrightcoveSDK", "Player Event: Playback Completed")
+                Logger.d("Player Event: Playback Completed", "DemoApp")
             }
             is PlayerEvent.PlaybackError -> {
-                android.util.Log.e("BrightcoveSDK", "Player Event: Playback Error - ${event.errorMessage}")
+                Logger.e("Player Event: Playback Error - ${event.errorMessage}", "DemoApp")
             }
         }
     }

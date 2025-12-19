@@ -96,6 +96,9 @@ fun LiveStreamScreen(
     showPlayerControls: Boolean = false,
     modifier: Modifier
 ) {
+    // Initialize logger with debug setting
+    Logger.isDebugEnabled = debug
+
     val context = LocalContext.current
     val accountId: String? = null
     val policyKey: String? = null

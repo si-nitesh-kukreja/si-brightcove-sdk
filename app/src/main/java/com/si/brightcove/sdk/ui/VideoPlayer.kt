@@ -43,9 +43,9 @@ fun VideoPlayer(
             // Set properties to force software decoding
             System.setProperty("media.stagefright.legacyencoder", "true")
             System.setProperty("media.stagefright.legacydecoder", "true")
-            android.util.Log.d("VideoPlayer", "Forced software decoding properties set")
+            Logger.d("Forced software decoding properties set", "VideoPlayer")
         } catch (e: Exception) {
-            android.util.Log.w("VideoPlayer", "Could not set software decoding properties", e)
+            Logger.w("Could not set software decoding properties", e, "VideoPlayer")
         }
 
         val renderersFactory = DefaultRenderersFactory(context).apply {
@@ -92,35 +92,35 @@ fun VideoPlayer(
                 // Add error listener for codec issues
                 addListener(object : Player.Listener {
                     override fun onPlayerError(error: PlaybackException) {
-                        android.util.Log.e("VideoPlayer", "ExoPlayer error: ${error.message}", error)
+                        Logger.e("ExoPlayer error: ${error.message}", error, "VideoPlayer")
                         when (error.errorCode) {
                             PlaybackException.ERROR_CODE_DECODER_INIT_FAILED -> {
-                                android.util.Log.w("VideoPlayer", "Hardware decoder failed - software fallback should handle this")
+                                Logger.w("Hardware decoder failed - software fallback should handle this", "VideoPlayer")
                             }
                             PlaybackException.ERROR_CODE_DECODING_FAILED -> {
-                                android.util.Log.e("VideoPlayer", "Decoding failed - video format not supported by hardware or software decoder")
+                                Logger.e("Decoding failed - video format not supported by hardware or software decoder", "VideoPlayer")
                             }
                             else -> {
-                                android.util.Log.e("VideoPlayer", "Other playback error: ${error.errorCode}")
+                                Logger.e("Other playback error: ${error.errorCode}", "VideoPlayer")
                             }
                         }
                     }
 
                     override fun onVideoSizeChanged(videoSize: VideoSize) {
-                        android.util.Log.d("VideoPlayer", "Video size: ${videoSize.width}x${videoSize.height}")
+                        Logger.d("Video size: ${videoSize.width}x${videoSize.height}", "VideoPlayer")
                     }
 
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         when (playbackState) {
                             Player.STATE_BUFFERING -> {
-                                android.util.Log.d("VideoPlayer", "Buffering...")
+                                Logger.d("Buffering...", "VideoPlayer")
                             }
                             Player.STATE_READY -> {
-                                android.util.Log.d("VideoPlayer", "Ready to play")
+                                Logger.d("Ready to play", "VideoPlayer")
                             }
                             Player.STATE_ENDED -> {
-                                android.util.Log.d("VideoPlayer", "Playback ended")
-                            }   
+                                Logger.d("Playback ended", "VideoPlayer")
+                            }
                         }
                     }
                 })

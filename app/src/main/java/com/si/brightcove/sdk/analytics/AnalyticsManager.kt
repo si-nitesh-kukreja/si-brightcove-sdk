@@ -1,7 +1,7 @@
 package com.si.brightcove.sdk.analytics
 
 import android.content.Context
-import android.util.Log
+import com.si.brightcove.sdk.ui.Logger
 
 /**
  * Analytics manager for tracking pageviews.
@@ -18,9 +18,7 @@ internal class AnalyticsManager(
      * @param screenName Name of the screen being viewed
      */
     fun trackPageView(screenName: String) {
-        if (debug) {
-            Log.d(TAG, "Pageview tracked: $screenName")
-        }
+        Logger.d("Pageview tracked: $screenName", "AnalyticsManager")
         
         // In a real implementation, this would send analytics to your analytics service
         // For now, we'll just log it. Parent apps should not receive this data.

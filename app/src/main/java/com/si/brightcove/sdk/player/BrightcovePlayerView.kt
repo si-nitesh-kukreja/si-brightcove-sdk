@@ -20,6 +20,7 @@ import com.brightcove.player.view.BrightcoveExoPlayerVideoView
 import com.si.brightcove.sdk.BrightcoveLiveStreamSDK
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.model.SDKError
+import com.si.brightcove.sdk.ui.Logger
 import com.si.brightcove.sdk.viewmodel.LiveStreamViewModel
 import java.lang.reflect.Method
 import java.util.Locale
@@ -38,16 +39,16 @@ fun BrightcovePlayerView(
     showControls: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    android.util.Log.d("BrightcoveSDK", ">>> BrightcovePlayerView composable called <<<")
+    Logger.d(">>> BrightcovePlayerView composable called <<<", "BrightcoveSDK")
     val video by viewModel.video.collectAsState()
     val context = LocalContext.current
-    android.util.Log.d("BrightcoveSDK", "BrightcovePlayerView - video state: ${video?.id ?: "null"}")
+    Logger.d("BrightcovePlayerView - video state: ${video?.id ?: "null"}", "BrightcoveSDK")
     
     AndroidView(
         factory = { ctx ->
-            android.util.Log.d("BrightcoveSDK", "=== Creating BrightcoveExoPlayerVideoView ===")
+            Logger.d("=== Creating BrightcoveExoPlayerVideoView ===", "BrightcoveSDK")
             val playerView = BrightcoveExoPlayerVideoView(ctx)
-            android.util.Log.d("BrightcoveSDK", "Player view created: ${playerView.javaClass.name}")
+            Logger.d("Player view created: ${playerView.javaClass.name}")
             
             val frameLayout = FrameLayout(ctx).apply {
                 layoutParams = FrameLayout.LayoutParams(
@@ -56,7 +57,7 @@ fun BrightcovePlayerView(
                 )
                 addView(playerView)
             }
-            android.util.Log.d("BrightcoveSDK", "Player view added to FrameLayout")
+            Logger.d("Player view added to FrameLayout")
             
             // Try to set a FullScreenController when controls are shown (needed for zoom/fullscreen button)
             if (showControls) {
@@ -76,16 +77,16 @@ fun BrightcovePlayerView(
                     try {
                         val setEventEmitterMethod = playerView.javaClass.getMethod("setEventEmitter", EventEmitter::class.java)
                         setEventEmitterMethod.invoke(playerView, standaloneEmitter)
-                        android.util.Log.d("BrightcoveSDK", "Successfully set EventEmitter on player view")
+                        Logger.d("Successfully set EventEmitter on player view")
                     } catch (e: NoSuchMethodException) {
-                        android.util.Log.d("BrightcoveSDK", "setEventEmitter method not found, trying alternative methods")
+                        Logger.d("setEventEmitter method not found, trying alternative methods")
                         // Try alternative method names
                         val alternativeMethods = listOf("setEmitter", "initializeEventEmitter", "initEventEmitter")
                         for (methodName in alternativeMethods) {
                             try {
                                 val method = playerView.javaClass.getMethod(methodName, EventEmitter::class.java)
                                 method.invoke(playerView, standaloneEmitter)
-                                android.util.Log.d("BrightcoveSDK", "Successfully called $methodName")
+                                Logger.d("Successfully called $methodName")
                                 break
                             } catch (e: Exception) {
                                 // Try next method
@@ -94,7 +95,7 @@ fun BrightcovePlayerView(
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.w("BrightcoveSDK", "Could not set EventEmitter on player view: ${e.message}")
+                Logger.w("Could not set EventEmitter on player view: ${e.message}")
             }
             
             // Initialize FullScreenController to prevent NullPointerException when media controller initializes
@@ -103,7 +104,7 @@ fun BrightcovePlayerView(
                 val fullScreenControllerClass = try {
                     Class.forName("com.brightcove.player.controller.FullScreenController")
                 } catch (e: ClassNotFoundException) {
-                    android.util.Log.w("BrightcoveSDK", "FullScreenController class not found: ${e.message}")
+                    Logger.w("FullScreenController class not found: ${e.message}")
                     null
                 }
                 
@@ -111,7 +112,7 @@ fun BrightcovePlayerView(
                     // Log all available constructors for debugging
                     if (BrightcoveLiveStreamSDK.getConfig().debug) {
                         val constructors = fullScreenControllerClass.declaredConstructors
-                        android.util.Log.d("BrightcoveSDK", "FullScreenController constructors: ${constructors.map { it.parameterTypes.joinToString { it.simpleName } }}")
+                        Logger.d("FullScreenController constructors: ${constructors.map { it.parameterTypes.joinToString { it.simpleName } }}", "BrightcoveSDK")
                     }
                     
                     var fullScreenController: Any? = null
@@ -181,13 +182,13 @@ fun BrightcovePlayerView(
                             }
                             
                             if (fullScreenController != null) {
-                                android.util.Log.d("BrightcoveSDK", "Successfully created FullScreenController with constructor: ${params.map { it.simpleName }}")
+                                Logger.d("Successfully created FullScreenController with constructor: ${params.map { it.simpleName }}")
                                 break
                             }
                         } catch (e: Exception) {
                             // Try next constructor
                             if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                                android.util.Log.d("BrightcoveSDK", "Constructor ${params.map { it.simpleName }} failed: ${e.message}")
+                                Logger.d("Constructor ${params.map { it.simpleName }} failed: ${e.message}", "BrightcoveSDK")
                             }
                         }
                     }
@@ -200,7 +201,7 @@ fun BrightcovePlayerView(
                                 fullScreenControllerClass
                             )
                             setFullScreenControllerMethod.invoke(playerView, fullScreenController)
-                            android.util.Log.d("BrightcoveSDK", "Successfully set FullScreenController on player view")
+                            Logger.d("Successfully set FullScreenController on player view")
                         } catch (e: NoSuchMethodException) {
                             // Try alternative method name
                             try {
@@ -209,7 +210,7 @@ fun BrightcovePlayerView(
                                     fullScreenControllerClass
                                 )
                                 method.invoke(playerView, fullScreenController)
-                                android.util.Log.d("BrightcoveSDK", "Successfully set FullScreenController via setFullscreenController")
+                                Logger.d("Successfully set FullScreenController via setFullscreenController")
                             } catch (e2: Exception) {
                                 // Try setting via reflection on field (check both this class and parent BaseVideoView)
                                 var fieldSet = false
@@ -221,7 +222,7 @@ fun BrightcovePlayerView(
                                         val field = currentClass.getDeclaredField("fullScreenController")
                                         field.isAccessible = true
                                         field.set(playerView, fullScreenController)
-                                        android.util.Log.d("BrightcoveSDK", "Successfully set FullScreenController via reflection field in ${currentClass.simpleName}")
+                                        Logger.d("Successfully set FullScreenController via reflection field in ${currentClass.simpleName}")
                                         fieldSet = true
                                     } catch (e: NoSuchFieldException) {
                                         // Try lowercase field name
@@ -229,7 +230,7 @@ fun BrightcovePlayerView(
                                             val field = currentClass.getDeclaredField("fullscreenController")
                                             field.isAccessible = true
                                             field.set(playerView, fullScreenController)
-                                            android.util.Log.d("BrightcoveSDK", "Successfully set FullScreenController via reflection field (lowercase) in ${currentClass.simpleName}")
+                                            Logger.d("Successfully set FullScreenController via reflection field (lowercase) in ${currentClass.simpleName}")
                                             fieldSet = true
                                         } catch (e2: Exception) {
                                             // Try parent class
@@ -242,12 +243,12 @@ fun BrightcovePlayerView(
                                 }
                                 
                                 if (!fieldSet) {
-                                    android.util.Log.w("BrightcoveSDK", "Could not set FullScreenController via reflection field in any class")
+                                    Logger.w("BrightcoveSDK", "Could not set FullScreenController via reflection field in any class")
                                 }
                             }
                         }
                     } else {
-                        android.util.Log.w("BrightcoveSDK", "Could not create FullScreenController with any known constructor.")
+                        Logger.w("BrightcoveSDK", "Could not create FullScreenController with any known constructor.")
                         // Do NOT disable fullscreen when controls are meant to be shown
                         if (!showControls) {
                             tryDisableFullscreenButton(playerView, ctx)
@@ -260,7 +261,7 @@ fun BrightcovePlayerView(
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.w("BrightcoveSDK", "Error initializing FullScreenController: ${e.message}", e)
+                Logger.w("Error initializing FullScreenController: ${e.message}", e, "BrightcoveSDK")
                 // Only disable fullscreen if controls should be hidden
                 if (!showControls) {
                     tryDisableFullscreenButton(playerView, ctx)
@@ -271,15 +272,15 @@ fun BrightcovePlayerView(
             frameLayout.tag = playerView
             
             // Try to access EventEmitter immediately after creation
-            android.util.Log.d("BrightcoveSDK", "Testing EventEmitter access immediately after creation...")
+            Logger.d("Testing EventEmitter access immediately after creation...")
             
             // Try direct property access
             var immediateEmitter: EventEmitter? = null
             try {
                 immediateEmitter = playerView.eventEmitter
-                android.util.Log.d("BrightcoveSDK", "Direct property access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
+                Logger.d("Direct property access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
             } catch (e: Exception) {
-                android.util.Log.e("BrightcoveSDK", "Exception getting EventEmitter via property: ${e.message}", e)
+                Logger.e("Exception getting EventEmitter via property: ${e.message}", e, "BrightcoveSDK")
             }
             
             // Try reflection to check if property exists
@@ -288,9 +289,9 @@ fun BrightcovePlayerView(
                     val eventEmitterField = playerView.javaClass.getDeclaredField("eventEmitter")
                     eventEmitterField.isAccessible = true
                     immediateEmitter = eventEmitterField.get(playerView) as? EventEmitter
-                    android.util.Log.d("BrightcoveSDK", "Reflection access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
+                    Logger.d("Reflection access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
                 } catch (e: Exception) {
-                    android.util.Log.d("BrightcoveSDK", "Reflection failed: ${e.message}")
+                    Logger.d("Reflection failed: ${e.message}")
                 }
             }
             
@@ -299,9 +300,9 @@ fun BrightcovePlayerView(
                 try {
                     val getEventEmitterMethod = playerView.javaClass.getMethod("getEventEmitter")
                     immediateEmitter = getEventEmitterMethod.invoke(playerView) as? EventEmitter
-                    android.util.Log.d("BrightcoveSDK", "Getter method access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
+                    Logger.d("Getter method access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
                 } catch (e: Exception) {
-                    android.util.Log.d("BrightcoveSDK", "Getter method failed: ${e.message}")
+                    Logger.d("Getter method failed: ${e.message}")
                 }
             }
             
@@ -313,54 +314,54 @@ fun BrightcovePlayerView(
                         it.name.contains("emitter", ignoreCase = true) ||
                         it.returnType.simpleName.contains("EventEmitter")
                     }
-                    android.util.Log.d("BrightcoveSDK", "Found ${methods.size} EventEmitter-related methods: ${methods.map { it.name }}")
+                    Logger.d("Found ${methods.size} EventEmitter-related methods: ${methods.map { it.name }}")
                     
                     val fields = playerView.javaClass.declaredFields.filter { 
                         it.name.contains("event", ignoreCase = true) || 
                         it.name.contains("emitter", ignoreCase = true) ||
                         it.type.simpleName.contains("EventEmitter")
                     }
-                    android.util.Log.d("BrightcoveSDK", "Found ${fields.size} EventEmitter-related fields: ${fields.map { it.name }}")
+                    Logger.d("Found ${fields.size} EventEmitter-related fields: ${fields.map { it.name }}")
                 } catch (e: Exception) {
-                    android.util.Log.e("BrightcoveSDK", "Error inspecting class: ${e.message}")
+                    Logger.e("Error inspecting class: ${e.message}", "BrightcoveSDK")
                 }
             }
             
-            android.util.Log.d("BrightcoveSDK", "Final immediate EventEmitter check: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
+            Logger.d("Final immediate EventEmitter check: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
             
             // Function to set up player once EventEmitter is confirmed available
             fun setupPlayerOnceReady(): Boolean {
                 return try {
-                    android.util.Log.d("BrightcoveSDK", "Attempting to access EventEmitter - view class: ${playerView.javaClass.simpleName}, attached: ${playerView.isAttachedToWindow}, visibility: ${playerView.visibility}")
+                    Logger.d("Attempting to access EventEmitter - view class: ${playerView.javaClass.simpleName}, attached: ${playerView.isAttachedToWindow}, visibility: ${playerView.visibility}")
                     val eventEmitter = playerView.eventEmitter
-                    android.util.Log.d("BrightcoveSDK", "EventEmitter access result: ${if (eventEmitter != null) "SUCCESS" else "NULL"}")
+                    Logger.d("EventEmitter access result: ${if (eventEmitter != null) "SUCCESS" else "NULL"}")
                     
                     if (eventEmitter != null) {
-                        android.util.Log.d("BrightcoveSDK", "EventEmitter confirmed available, setting up player")
+                        Logger.d("EventEmitter confirmed available, setting up player")
                         setupPlayerEvents(playerView, viewModel)
                         // Only notify ViewModel after EventEmitter is confirmed available
                         viewModel.setPlayerView(playerView, eventEmitterReady = true)
                         true
                     } else {
-                        android.util.Log.w("BrightcoveSDK", "EventEmitter is null - will retry")
+                        Logger.w("BrightcoveSDK", "EventEmitter is null - will retry")
                         false
                     }
                 } catch (e: Exception) {
-                    android.util.Log.e("BrightcoveSDK", "Exception accessing EventEmitter: ${e.javaClass.simpleName} - ${e.message}", e)
+                    Logger.e("Exception accessing EventEmitter: ${e.javaClass.simpleName} - ${e.message}", e, "BrightcoveSDK")
                     false
                 }
             }
             
             // If EventEmitter was available immediately, use it
             if (immediateEmitter != null) {
-                android.util.Log.d("BrightcoveSDK", "EventEmitter available immediately! Setting up player")
+                Logger.d("EventEmitter available immediately! Setting up player")
                 setupPlayerEvents(playerView, viewModel)
                 viewModel.setPlayerView(playerView, eventEmitterReady = true)
             } else {
                 // Try immediately - EventEmitter should be available right after creation
-                android.util.Log.d("BrightcoveSDK", "EventEmitter not immediately available, trying setupPlayerOnceReady()")
+                Logger.d("EventEmitter not immediately available, trying setupPlayerOnceReady()")
                 if (!setupPlayerOnceReady()) {
-                    android.util.Log.d("BrightcoveSDK", "EventEmitter not immediately available, waiting for view attachment")
+                    Logger.d("EventEmitter not immediately available, waiting for view attachment")
                 
                 // Wait for view to be attached to window
                 frameLayout.post {
@@ -425,32 +426,32 @@ fun BrightcovePlayerView(
                     val isVisible = view.visibility == android.view.View.VISIBLE
                     val hasDimensions = view.width > 0 && view.height > 0
                     
-                    android.util.Log.d("BrightcoveSDK", "Attempting to add video - visible: $isVisible, hasDimensions: $hasDimensions, width: ${view.width}, height: ${view.height}")
+                    Logger.d("Attempting to add video - visible: $isVisible, hasDimensions: $hasDimensions, width: ${view.width}, height: ${view.height}")
                     
                     if (isVisible && hasDimensions) {
                         // View is visible and has dimensions, try to add video
                         try {
-                            android.util.Log.d("BrightcoveSDK", "Adding video to player: ${video.id}")
+                            Logger.d("Adding video to player: ${video.id}")
                             view.add(video)
                             view.start()
-                            android.util.Log.d("BrightcoveSDK", "Video added and started successfully")
+                            Logger.d("Video added and started successfully")
                         } catch (e: Exception) {
-                            android.util.Log.w("BrightcoveSDK", "Error adding video: ${e.message}, will retry")
+                            Logger.w("Error adding video: ${e.message}, will retry", "BrightcoveSDK")
                             // Retry after a shorter delay (reduced from 2000ms for faster loading)
                             frameLayout.postDelayed({
                                 try {
-                                    android.util.Log.d("BrightcoveSDK", "Retrying to add video after delay")
+                                    Logger.d("Retrying to add video after delay")
                                     view.add(video)
                                     view.start()
-                                    android.util.Log.d("BrightcoveSDK", "Video added successfully on retry")
+                                    Logger.d("Video added successfully on retry")
                                 } catch (ex: Exception) {
-                                    android.util.Log.w("BrightcoveSDK", "Error adding video on retry: ${ex.message}")
+                                    Logger.w("Error adding video on retry: ${ex.message}", "BrightcoveSDK")
                                 }
                             }, 500) // Reduced from 2000ms to 500ms
                         }
                     } else {
                         // View not ready yet, wait for it to be laid out
-                        android.util.Log.d("BrightcoveSDK", "Player view not ready (visible=$isVisible, hasDimensions=$hasDimensions), waiting for layout")
+                        Logger.d("Player view not ready (visible=$isVisible, hasDimensions=$hasDimensions), waiting for layout")
                         
                         val viewTreeObserver = view.viewTreeObserver
                         viewTreeObserver.addOnGlobalLayoutListener(object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
@@ -463,10 +464,10 @@ fun BrightcovePlayerView(
                                 
                                 fun tryAddVideo() {
                                     try {
-                                        android.util.Log.d("BrightcoveSDK", "Attempting to add video (attempt ${retryCount + 1}/$maxRetries)")
+                                        Logger.d("Attempting to add video (attempt ${retryCount + 1}/$maxRetries)")
                                         view.add(video)
                                         view.start()
-                                        android.util.Log.d("BrightcoveSDK", "Video added and started successfully!")
+                                        Logger.d("Video added and started successfully!")
                                         
                                         // Set up event listeners
                                         setupPlayerEvents(view, viewModel)
@@ -475,10 +476,10 @@ fun BrightcovePlayerView(
                                         if (retryCount < maxRetries) {
                                             retryCount++
                                             val delay = (retryCount * 200).toLong() // 200ms, 400ms, 600ms, etc. (reduced from 500ms)
-                                            android.util.Log.d("BrightcoveSDK", "Error adding video: ${e.message}, retrying in ${delay}ms (attempt $retryCount/$maxRetries)")
+                                            Logger.d("Error adding video: ${e.message}, retrying in ${delay}ms (attempt $retryCount/$maxRetries)")
                                             frameLayout.postDelayed({ tryAddVideo() }, delay)
                                         } else {
-                                            android.util.Log.e("BrightcoveSDK", "Failed to add video after $maxRetries attempts: ${e.message}")
+                                            Logger.e("Failed to add video after $maxRetries attempts: ${e.message}", "BrightcoveSDK")
                                         }
                                     }
                                 }
@@ -570,7 +571,7 @@ private fun setupFullscreenController(
             ).firstOrNull { it != null }
             if (setter != null) {
                 setter.invoke(playerView, fullScreenController)
-                android.util.Log.d("BrightcoveSDK", "Fullscreen controller set (${fullScreenController.javaClass.simpleName})")
+                Logger.d("Fullscreen controller set (${fullScreenController.javaClass.simpleName})")
                 return
             }
 
@@ -583,7 +584,7 @@ private fun setupFullscreenController(
                     if (field != null) {
                         field.isAccessible = true
                         field.set(playerView, fullScreenController)
-                        android.util.Log.d("BrightcoveSDK", "Fullscreen controller set via field on ${current.simpleName}")
+                        Logger.d("Fullscreen controller set via field on ${current.simpleName}")
                         return
                     }
                 } catch (_: Exception) { }
@@ -591,7 +592,7 @@ private fun setupFullscreenController(
             }
         }
     } catch (e: Exception) {
-        android.util.Log.d("BrightcoveSDK", "Could not set fullscreen controller: ${e.message}")
+        Logger.d("Could not set fullscreen controller: ${e.message}")
     }
 }
 
@@ -646,13 +647,13 @@ private fun tryDisableFullscreenButton(
                     try {
                         val setFullscreenEnabledMethod = mediaControllerClass.getMethod("setFullscreenEnabled", Boolean::class.java)
                         setFullscreenEnabledMethod.invoke(mediaController, false)
-                        android.util.Log.d("BrightcoveSDK", "Successfully disabled fullscreen button in media controller")
+                        Logger.d("Successfully disabled fullscreen button in media controller")
                     } catch (e: Exception) {
-                        android.util.Log.d("BrightcoveSDK", "Could not disable fullscreen via setFullscreenEnabled: ${e.message}")
+                        Logger.d("Could not disable fullscreen via setFullscreenEnabled: ${e.message}")
                     }
                 }
             } catch (e: Exception) {
-                android.util.Log.d("BrightcoveSDK", "Could not get media controller: ${e.message}")
+                Logger.d("Could not get media controller: ${e.message}")
             }
         }
         
@@ -661,12 +662,12 @@ private fun tryDisableFullscreenButton(
         try {
             val setFullscreenEnabledMethod = playerView.javaClass.getMethod("setFullscreenEnabled", Boolean::class.java)
             setFullscreenEnabledMethod.invoke(playerView, false)
-            android.util.Log.d("BrightcoveSDK", "Successfully disabled fullscreen on player view")
+            Logger.d("Successfully disabled fullscreen on player view")
         } catch (e: Exception) {
-            android.util.Log.d("BrightcoveSDK", "Could not disable fullscreen on player view: ${e.message}")
+            Logger.d("Could not disable fullscreen on player view: ${e.message}")
         }
     } catch (e: Exception) {
-        android.util.Log.w("BrightcoveSDK", "Error trying to disable fullscreen button: ${e.message}")
+        Logger.w("BrightcoveSDK", "Error trying to disable fullscreen button: ${e.message}")
     }
 }
 
@@ -766,7 +767,7 @@ private fun applyControlsVisibility(
             }
         }
     } catch (e: Exception) {
-        android.util.Log.d("BrightcoveSDK", "Could not toggle media controller visibility: ${e.message}")
+        Logger.d("Could not toggle media controller visibility: ${e.message}")
     }
 }
 
@@ -783,22 +784,22 @@ private fun waitForEventEmitterWithRetry(
             val eventEmitter = try {
                 playerView.eventEmitter
             } catch (e: Exception) {
-                android.util.Log.e("BrightcoveSDK", "Exception accessing EventEmitter on attempt $attempts", e)
+                Logger.e("Exception accessing EventEmitter on attempt $attempts", e, "BrightcoveSDK")
                 null
             }
             
             if (eventEmitter != null) {
-                android.util.Log.d("BrightcoveSDK", "EventEmitter available after retry (attempt $attempts), setting up")
+                Logger.d("EventEmitter available after retry (attempt $attempts), setting up")
                 setupPlayerEvents(playerView, viewModel)
                 viewModel.setPlayerView(playerView, eventEmitterReady = true)
             } else if (attempts < maxAttempts) {
                 attempts++
                 if (attempts % 10 == 0) {
-                    android.util.Log.d("BrightcoveSDK", "Waiting for EventEmitter... attempt $attempts/$maxAttempts (attached=${playerView.isAttachedToWindow})")
+                    Logger.d("Waiting for EventEmitter... attempt $attempts/$maxAttempts (attached=${playerView.isAttachedToWindow})")
                 }
                 frameLayout.postDelayed(this, 50) // Check every 50ms (reduced from 100ms for faster loading)
             } else {
-                android.util.Log.e("BrightcoveSDK", "EventEmitter not available after $maxAttempts attempts! Setting player view anyway - Catalog operations will fail until EventEmitter is available")
+                Logger.e("BrightcoveSDK", "EventEmitter not available after $maxAttempts attempts! Setting player view anyway - Catalog operations will fail until EventEmitter is available")
                 // Set player view anyway - the ViewModel will keep retrying
                 viewModel.setPlayerView(playerView, eventEmitterReady = false)
             }
@@ -825,7 +826,7 @@ private fun setupPlayerEvents(
     }
     
     if (eventEmitter == null) {
-        android.util.Log.d("BrightcoveSDK", "EventEmitter not available for event listeners - will set up when player is ready")
+        Logger.d("EventEmitter not available for event listeners - will set up when player is ready")
         return
     }
 

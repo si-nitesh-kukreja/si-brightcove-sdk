@@ -13,6 +13,7 @@ import com.si.brightcove.sdk.model.LiveStreamState
 import com.si.brightcove.sdk.model.SDKError
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.network.NetworkMonitor
+import com.si.brightcove.sdk.ui.Logger
 import kotlin.math.pow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,13 +67,13 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
             if (eventEmitterReady) {
                 // EventEmitter is confirmed ready, check stream status immediately
                 if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                    android.util.Log.d("BrightcoveSDK", "Player view set with EventEmitter ready, checking stream status")
+                    Logger.d("Player view set with EventEmitter ready, checking stream status")
                 }
                 checkLiveStreamStatus()
             } else {
                 // EventEmitter not ready yet, wait for it
                 if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                    android.util.Log.d("BrightcoveSDK", "Player view set but EventEmitter not ready, waiting...")
+                    Logger.d("Player view set but EventEmitter not ready, waiting...")
                 }
                 viewModelScope.launch {
                     waitForEventEmitterAndCheck()
@@ -95,7 +96,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
             val eventEmitter = playerView?.eventEmitter
             if (eventEmitter != null) {
                 if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                    android.util.Log.d("BrightcoveSDK", "EventEmitter is now available, checking stream status")
+                    Logger.d("EventEmitter is now available, checking stream status")
                 }
                 checkLiveStreamStatus()
                 return
@@ -105,13 +106,13 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
             delay(50) // Wait 50ms before checking again (reduced from 100ms for faster loading)
             
             if (BrightcoveLiveStreamSDK.getConfig().debug && attempts % 5 == 0) {
-                android.util.Log.d("BrightcoveSDK", "Waiting for EventEmitter... attempt $attempts/$maxAttempts")
+                Logger.d("Waiting for EventEmitter... attempt $attempts/$maxAttempts")
             }
         }
         
         // If EventEmitter still not available after max attempts, try checking anyway
         if (BrightcoveLiveStreamSDK.getConfig().debug) {
-            android.util.Log.w("BrightcoveSDK", "EventEmitter still not available after ${maxAttempts} attempts, checking anyway")
+            Logger.w("EventEmitter still not available after ${maxAttempts} attempts, checking anyway")
         }
         checkLiveStreamStatus()
     }
@@ -151,7 +152,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                                 mediaLoop = config.configMediaLoop
                             )
                             if (config.debug) {
-                                android.util.Log.d("BrightcoveSDK", "Initialized with preLive state from config")
+                                Logger.d("Initialized with preLive state from config")
                             }
                         }
                     }
@@ -159,7 +160,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
             } catch (e: Exception) {
                 // SDK not initialized yet, will be handled when setPlayerView is called
                 if (BrightcoveLiveStreamSDK.isInitialized() && BrightcoveLiveStreamSDK.getConfig().debug) {
-                    android.util.Log.d("BrightcoveSDK", "Could not initialize with config state: ${e.message}")
+                    Logger.d("Could not initialize with config state: ${e.message}")
                 }
             }
         }
@@ -194,7 +195,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                         // Config state is missing/empty - this means config failed to load
                         // Show error or PreLive with empty values, don't check Brightcove video
                         if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                            android.util.Log.w("BrightcoveSDK", "Config-driven mode but configState is blank - configuration may be missing or invalid")
+                            Logger.w("Config-driven mode but configState is blank - configuration may be missing or invalid")
                         }
                         
                         // Show PreLive with available config values (may be empty)
@@ -220,7 +221,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                         "prelive","postlive"-> {
                             // Config says pre-live: show configured media immediately
                             if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                                android.util.Log.d("BrightcoveSDK", "Config state is preLive - showing configured media")
+                                Logger.d("Config state is preLive - showing configured media")
                             }
                             
                             if (_streamState.value is LiveStreamState.Loading || 
@@ -237,14 +238,14 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                         "live" -> {
                             // Config says live: check Brightcove video
                             if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                                android.util.Log.d("BrightcoveSDK", "Config state is live - checking Brightcove video")
+                                Logger.d("Config state is live - checking Brightcove video")
                             }
                             // Continue to Brightcove video check below
                         }
 //                        "postlive" -> {
 //                            // Config says post-live: show error or end state
 //                            if (BrightcoveLiveStreamSDK.getConfig().debug) {
-//                                android.util.Log.d("BrightcoveSDK", "Config state is postLive")
+//                                Logger.d("Config state is postLive")
 //                            }
 //                            // Handle post-live state if needed
 //                            return@launch
@@ -252,7 +253,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                         else -> {
                             // Unknown state, show PreLive with config values instead of checking Brightcove
                             if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                                android.util.Log.w("BrightcoveSDK", "Unknown config state: $configStateLower, showing PreLive with config values")
+                                Logger.w("Unknown config state: $configStateLower, showing PreLive with config values")
                             }
                             if (_streamState.value is LiveStreamState.Loading) {
                                 _streamState.value = LiveStreamState.PreLive(
@@ -273,7 +274,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                 if (catalog == null) {
                     // Player view not available yet, wait for it
                     if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                        android.util.Log.d("BrightcoveSDK", "Catalog not available - waiting for player view")
+                        Logger.d("Catalog not available - waiting for player view")
                     }
                     // Don't change state - stay in Loading or current state
                     return@launch
@@ -281,13 +282,13 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
 
                 val effectiveVideoId = config.getEffectiveVideoId()
                 if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                    android.util.Log.d("BrightcoveSDK", "Checking video availability for ID: $effectiveVideoId")
+                    Logger.d("Checking video availability for ID: $effectiveVideoId")
                 }
 
                 catalog.findVideoByID(effectiveVideoId, object : VideoListener() {
                     override fun onVideo(video: Video) {
                         if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                            android.util.Log.d("BrightcoveSDK", "Video found: ${video.name}, ID: ${video.id}")
+                            Logger.d("Video found: ${video.name}, ID: ${video.id}")
                         }
                         
                         _video.value = video
@@ -307,7 +308,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                         retryAttempts = 0 // Reset for video not found (expected before stream starts)
                         
                         if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                            android.util.Log.d("BrightcoveSDK", "Video not available: $error")
+                            Logger.d("Video not available: $error")
                         }
                         
                         // Video not found or not available yet, stay in PreLive state
@@ -347,7 +348,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
         }
         
         if (config.debug) {
-            android.util.Log.e("BrightcoveSDK", errorMessage, e)
+            Logger.e(errorMessage, e)
         }
         
         val retryable = errorCode == SDKError.NETWORK_ERROR && 
@@ -374,7 +375,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                 val config = BrightcoveLiveStreamSDK.getConfig()
                 val pollingInterval = config.getEffectivePollingInterval()
                 delay(pollingInterval)
-                android.util.Log.d("BrightcoveSDK", "Polling Interval: $pollingInterval")
+                Logger.d("Polling Interval: $pollingInterval")
                 when (val currentState = _streamState.value) {
                     is LiveStreamState.PreLive, is LiveStreamState.Loading -> {
                         checkLiveStreamStatus()

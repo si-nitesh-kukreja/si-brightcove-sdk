@@ -12,6 +12,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import java.io.IOException
 import java.lang.reflect.Type
+import com.si.brightcove.sdk.ui.Logger
 
 /**
  * Manages loading and accessing stream configuration from JSON/API.
@@ -49,7 +50,7 @@ class ConfigurationManager private constructor() {
             }
         } catch (e: Exception) {
             if (debug) {
-                android.util.Log.e("ConfigurationManager", "Failed to load configuration", e)
+                Logger.e("Failed to load configuration", e, "ConfigurationManager")
             }
             Result.failure(e)
         }
