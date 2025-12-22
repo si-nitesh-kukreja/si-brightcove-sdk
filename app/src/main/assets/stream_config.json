@@ -50,15 +50,15 @@
                 },
                 "kl": {
                     "mediaType": "image",
-                    "mediaUrl": "https://i.pinimg.com/736x/7a/4a/45/7a4a45ecb7e8254892665d97f82a1706.jpg",
-                    "mediaTitle": "Road Video",
+                    "mediaUrl": "https://i.pinimg.com/736x/76/8e/8a/768e8a367dc06a61112412f3e31a9a22.jpg",
+                    "mediaTitle": "Parrot Image Fab",
                     "mediaLoop": true
                 }
             },
             "intervals": {
-                "preLive": 10,
-                "live": 10,
-                "postLive": 10
+                "preLive": 20,
+                "live": 20,
+                "postLive": 20
             }
         },
         "nonProd": {}
