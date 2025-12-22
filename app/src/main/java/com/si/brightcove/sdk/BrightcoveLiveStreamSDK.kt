@@ -78,7 +78,6 @@ object BrightcoveLiveStreamSDK {
             accountId = accountId,
             policyKey = policyKey,
             debug = debug,
-            pollingIntervalMs = 5_000,
             autoRetryOnError = true,
             maxRetryAttempts = 3,
             retryBackoffMultiplier = 2.0
@@ -97,7 +96,6 @@ object BrightcoveLiveStreamSDK {
      * @param accountId Optional override for Brightcove Account ID
      * @param policyKey Optional override for Brightcove Policy Key
      * @param debug Optional debug flag (default: false)
-     * @param pollingIntervalMs Interval in milliseconds to check for stream availability (default: 5000)
      * @param autoRetryOnError Whether to automatically retry on errors (default: true)
      * @param maxRetryAttempts Maximum number of retry attempts (default: 3)
      * @param retryBackoffMultiplier Multiplier for exponential backoff (default: 2.0)
@@ -114,7 +112,6 @@ object BrightcoveLiveStreamSDK {
         accountId: String? = null,
         policyKey: String? = null,
         debug: Boolean = false,
-        pollingIntervalMs: Long = 5_000, // Default 5 seconds (reduced for faster loading)
         autoRetryOnError: Boolean = true,
         maxRetryAttempts: Int = 3,
         retryBackoffMultiplier: Double = 2.0
@@ -137,6 +134,7 @@ object BrightcoveLiveStreamSDK {
         var configMediaUrl = ""
         var configMediaTitle = ""
         var configMediaLoop = true
+        var configIntervals = emptyMap<String, Int>()
 
         if (!state) {
             val configManager = ConfigurationManager.getInstance()
@@ -152,9 +150,10 @@ object BrightcoveLiveStreamSDK {
                     configMediaUrl = streamConfig.mediaUrl
                     configMediaTitle = streamConfig.mediaTitle
                     configMediaLoop = streamConfig.mediaLoop
+                    configIntervals = streamConfig.intervals
 
                     if (debug) {
-                        Logger.d("Loaded configuration: videoId=$configVideoId, state=$configState, mediaType=$configMediaType")
+                        Logger.d("Loaded configuration: videoId=$configVideoId, state=$configState, mediaType=$configMediaType, intervals=$configIntervals")
                     }
                 } else {
                     if (debug) {
@@ -177,7 +176,6 @@ object BrightcoveLiveStreamSDK {
             eventType = eventType,
             environment = environment,
             debug = debug,
-            pollingIntervalMs = pollingIntervalMs,
             autoRetryOnError = autoRetryOnError,
             maxRetryAttempts = maxRetryAttempts,
             retryBackoffMultiplier = retryBackoffMultiplier,
@@ -188,7 +186,8 @@ object BrightcoveLiveStreamSDK {
             configMediaType = configMediaType,
             configMediaUrl = configMediaUrl,
             configMediaTitle = configMediaTitle,
-            configMediaLoop = configMediaLoop
+            configMediaLoop = configMediaLoop,
+            configIntervals = configIntervals
         )
         
         analyticsManager = AnalyticsManager(appContext, debug)

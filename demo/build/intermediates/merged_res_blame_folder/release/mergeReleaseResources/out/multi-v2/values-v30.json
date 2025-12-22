@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.si.brightcove.demo-mergeReleaseResources-45:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Nitesh.kukreja\\.gradle\\caches\\8.13\\transforms\\9c20aebfd97d02d60f1cde3c99fee840\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // Live Stream Screen - Main SDK entry point
                     LiveStreamScreen(
-                        eventType = EventType.mobile,
+                        eventType = EventType.camera,
                         environment = Environment.prod,
                         modifier = Modifier.fillMaxSize(),
                         locale = "en"

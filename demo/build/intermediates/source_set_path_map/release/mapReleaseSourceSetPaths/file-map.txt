@@ -1,0 +1,50 @@
+com.si.brightcove.demo-library-1.7.7-0 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\029f27464ddbff7c9ce1574291cb805d\transformed\library-1.7.7\res
+com.si.brightcove.demo-exoplayer2-8.3.0-1 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\0ba1ec3fb305c34187a223f772209a50\transformed\exoplayer2-8.3.0\res
+com.si.brightcove.demo-appcompat-resources-1.6.1-2 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\0d640b6eea3a41be36c2b998944a81d0\transformed\appcompat-resources-1.6.1\res
+com.si.brightcove.demo-navigationevent-3 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\1c995499cc82de43e8fc5e517af7ab8d\transformed\navigationevent\res
+com.si.brightcove.demo-lifecycle-viewmodel-ktx-2.10.0-4 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\20f646ed45bfdce0593440e950ee27bd\transformed\lifecycle-viewmodel-ktx-2.10.0\res
+com.si.brightcove.demo-animation-core-release-5 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\2346d4aaec50f296c6c9bb1885471e07\transformed\animation-core-release\res
+com.si.brightcove.demo-core-runtime-2.2.0-6 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\30267c5672955bb6db26ec9dfc69ce2b\transformed\core-runtime-2.2.0\res
+com.si.brightcove.demo-core-1.17.0-7 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\34d0d62fc32178327637567ddc9aaf9d\transformed\core-1.17.0\res
+com.si.brightcove.demo-startup-runtime-1.1.1-8 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\360e7083b7fecb6705a63294ecde6c54\transformed\startup-runtime-1.1.1\res
+com.si.brightcove.demo-savedstate-9 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\4307a8350b2b611cda88c51af18a13ea\transformed\savedstate\res
+com.si.brightcove.demo-activity-1.12.0-10 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\475b40a02a75a34a3c0c2b38adf6b4a5\transformed\activity-1.12.0\res
+com.si.brightcove.demo-media-1.6.0-11 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\4dd57c7989245af6bb1a7426f9bb1331\transformed\media-1.6.0\res
+com.si.brightcove.demo-lifecycle-process-2.10.0-12 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\5696cf7d57cd6e6fb095b360b7b65fd9\transformed\lifecycle-process-2.10.0\res
+com.si.brightcove.demo-profileinstaller-1.4.0-13 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\5e7f5849799e4315eeac058b83965ab3\transformed\profileinstaller-1.4.0\res
+com.si.brightcove.demo-exoplayer-ui-2.19.1-14 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\62d3b885b92bc5ba0ea0a0d89b19a8be\transformed\exoplayer-ui-2.19.1\res
+com.si.brightcove.demo-customview-poolingcontainer-1.0.0-15 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\65d99fe41645a372d43a01fabc02abcd\transformed\customview-poolingcontainer-1.0.0\res
+com.si.brightcove.demo-offline-playback-8.3.0-16 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\676cf0d4251f7377e24a6f39692a972f\transformed\offline-playback-8.3.0\res
+com.si.brightcove.demo-graphics-path-1.0.1-17 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\713cfb7c97e9f2c1330248d172fe8b39\transformed\graphics-path-1.0.1\res
+com.si.brightcove.demo-foundation-release-18 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\7ef0e76f55dd7ed3c6b6efad8d39bf0d\transformed\foundation-release\res
+com.si.brightcove.demo-core-ktx-1.17.0-19 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\82213bfd005bf658041e3141bad0f34c\transformed\core-ktx-1.17.0\res
+com.si.brightcove.demo-savedstate-ktx-1.4.0-20 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\87e6d607db03f6fb53ed872835312826\transformed\savedstate-ktx-1.4.0\res
+com.si.brightcove.demo-extension-mediasession-2.19.1-21 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\9076f30049ccb5aff78cc8a943a5f56d\transformed\extension-mediasession-2.19.1\res
+com.si.brightcove.demo-annotation-experimental-1.4.1-22 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\94a483e64e197bfc4c457ab0d792c981\transformed\annotation-experimental-1.4.1\res
+com.si.brightcove.demo-exoplayer-core-2.19.1-23 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\9a14c0cf3cd1fbc43a55856210f20d58\transformed\exoplayer-core-2.19.1\res
+com.si.brightcove.demo-material3-release-24 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\9c20aebfd97d02d60f1cde3c99fee840\transformed\material3-release\res
+com.si.brightcove.demo-material-ripple-release-25 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\a40bca935fdd8e814b9bf380c4ec6969\transformed\material-ripple-release\res
+com.si.brightcove.demo-ui-graphics-release-26 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\aafeb6bc5b5adba8678fd0d267c88db1\transformed\ui-graphics-release\res
+com.si.brightcove.demo-core-viewtree-1.0.0-27 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\ba93b208dc7ebf9e8e3f645584ce6444\transformed\core-viewtree-1.0.0\res
+com.si.brightcove.demo-lifecycle-viewmodel-28 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\c28a8c9d3a451cbe157fbbbf25295110\transformed\lifecycle-viewmodel\res
+com.si.brightcove.demo-animation-release-29 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\c6438202ee892dd726f6e7494c73643e\transformed\animation-release\res
+com.si.brightcove.demo-ui-release-30 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\ca25948d8f4c9b215fcb20718f1c8896\transformed\ui-release\res
+com.si.brightcove.demo-foundation-layout-release-31 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\ccfe0ee12ff172045c4ece876de42470\transformed\foundation-layout-release\res
+com.si.brightcove.demo-activity-ktx-1.12.0-32 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\d7a3927eb6bcd3afe4b131e30a9fdab4\transformed\activity-ktx-1.12.0\res
+com.si.brightcove.demo-tracing-1.2.0-33 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\d7f1ca53522ad0406552aed601ec56fb\transformed\tracing-1.2.0\res
+com.si.brightcove.demo-material-icons-core-release-34 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\da32fe5d6226d7d385bcb11268eff51b\transformed\material-icons-core-release\res
+com.si.brightcove.demo-lifecycle-runtime-35 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\daaa5d9c802ce734c69544a439a41f21\transformed\lifecycle-runtime\res
+com.si.brightcove.demo-activity-compose-1.12.0-36 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\dc9219c52a875a9570626bbc19da075e\transformed\activity-compose-1.12.0\res
+com.si.brightcove.demo-lifecycle-livedata-core-2.10.0-37 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\e36fdb168e79e440c28b2c6f64911118\transformed\lifecycle-livedata-core-2.10.0\res
+com.si.brightcove.demo-coil-base-2.5.0-38 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\ebe5ceb45d84c28e79d9646a1b5384c0\transformed\coil-base-2.5.0\res
+com.si.brightcove.demo-emoji2-1.4.0-39 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\f8482d2a23f76f2088ce9a7d1031b8c6\transformed\emoji2-1.4.0\res
+com.si.brightcove.demo-android-sdk-8.3.0-40 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\fbb707f22d2303daeccedb0c26603002\transformed\android-sdk-8.3.0\res
+com.si.brightcove.demo-recyclerview-1.3.0-41 C:\Users\Nitesh.kukreja\.gradle\caches\8.13\transforms\fc9f9a3e5cfee6357b2d5c0dca67797a\transformed\recyclerview-1.3.0\res
+com.si.brightcove.demo-release-42 D:\Android Projects\BrightCove SDK\app\build\intermediates\packaged_res\release\packageReleaseResources
+com.si.brightcove.demo-pngs-43 D:\Android Projects\BrightCove SDK\demo\build\generated\res\pngs\release
+com.si.brightcove.demo-resValues-44 D:\Android Projects\BrightCove SDK\demo\build\generated\res\resValues\release
+com.si.brightcove.demo-packageReleaseResources-45 D:\Android Projects\BrightCove SDK\demo\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.si.brightcove.demo-packageReleaseResources-46 D:\Android Projects\BrightCove SDK\demo\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.si.brightcove.demo-release-47 D:\Android Projects\BrightCove SDK\demo\build\intermediates\merged_res\release\mergeReleaseResources
+com.si.brightcove.demo-main-48 D:\Android Projects\BrightCove SDK\demo\src\main\res
+com.si.brightcove.demo-release-49 D:\Android Projects\BrightCove SDK\demo\src\release\res

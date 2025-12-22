@@ -94,11 +94,13 @@ class ConfigurationManager private constructor() {
             val state = envConfig.state
                 ?: return Result.failure(IllegalArgumentException("State not found in configuration for ${environment.name}"))
             
-            val languages = envConfig.languages
-                ?: return Result.failure(IllegalArgumentException("Languages not found in configuration for ${environment.name}"))
-            
-            val localeConfig = languages[locale]
+            val localeMap = envConfig.locale
+                ?: return Result.failure(IllegalArgumentException("locale not found in configuration for ${environment.name}"))
+
+            val localeConfig = localeMap[locale]
                 ?: return Result.failure(IllegalArgumentException("Locale '$locale' not found in configuration"))
+
+            val intervals = envConfig.intervals ?: emptyMap()
 
             val result = StreamConfigData(
                 videoId = videoId,
@@ -106,7 +108,8 @@ class ConfigurationManager private constructor() {
                 mediaType = localeConfig.mediaType,
                 mediaUrl = localeConfig.mediaUrl,
                 mediaTitle = localeConfig.mediaTitle,
-                mediaLoop = localeConfig.mediaLoop
+                mediaLoop = localeConfig.mediaLoop,
+                intervals = intervals
             )
 
             Result.success(result)
@@ -176,5 +179,6 @@ data class StreamConfigData(
     val mediaType: MediaType,
     val mediaUrl: String,
     val mediaTitle: String,
-    val mediaLoop: Boolean
+    val mediaLoop: Boolean,
+    val intervals: Map<String, Int> = emptyMap() // polling intervals in seconds: "preLive", "live", "postLive"
 )

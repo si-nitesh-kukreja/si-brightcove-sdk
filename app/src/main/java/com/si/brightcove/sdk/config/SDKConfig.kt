@@ -12,7 +12,6 @@ internal data class SDKConfig(
     val eventType: com.si.brightcove.sdk.model.EventType,
     val environment: com.si.brightcove.sdk.model.Environment,
     val debug: Boolean = false,
-    val pollingIntervalMs: Long = 1_000, // Default 1 seconds (reduced for faster loading)
     val autoRetryOnError: Boolean = true,
     val maxRetryAttempts: Int = 3,
     val retryBackoffMultiplier: Double = 2.0,
@@ -24,7 +23,8 @@ internal data class SDKConfig(
     val configMediaType: MediaType = MediaType.IMAGE,
     val configMediaUrl: String = "",
     val configMediaTitle: String = "",
-    val configMediaLoop: Boolean
+    val configMediaLoop: Boolean,
+    val configIntervals: Map<String, Int> = emptyMap() // polling intervals in seconds
 ) {
     /**
      * Get Brightcove Account ID (alias for accountId).
@@ -45,14 +45,17 @@ internal data class SDKConfig(
      * Get the effective polling interval based on config state and useConfig flag.
      */
     fun getEffectivePollingInterval(): Long {
-        return if (useConfig) {
-            when (configState.lowercase()) {
-                "prelive","postlive"-> 10_000L // 30 seconds for pre-live
-                "live" -> 15_000L    // 1 minute for live
-                else -> pollingIntervalMs
+        return if (!useConfig && configIntervals.isNotEmpty()) {
+            // Use intervals from config (convert seconds to milliseconds)
+            val intervalSeconds = when (configState.lowercase()) {
+                "prelive" -> configIntervals["preLive"] ?: configIntervals["postLive"]
+                "postlive" -> configIntervals["postLive"] ?: configIntervals["preLive"]
+                "live" -> configIntervals["live"]
+                else -> null
             }
+            intervalSeconds?.let { it * 1000L } ?: 30
         } else {
-            pollingIntervalMs
+            30
         }
     }
 }

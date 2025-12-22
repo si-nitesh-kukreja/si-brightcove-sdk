@@ -169,7 +169,6 @@ fun MyScreen() {
         policyKey = "CUSTOM_POLICY_KEY",     // Optional: Override default mapping
         videoId = "CUSTOM_VIDEO_ID",         // Optional: Override default mapping
         debug = BuildConfig.DEBUG,
-        pollingIntervalMs = 1_000,           // Check for stream every 1 second
         autoRetryOnError = true,             // Automatically retry on errors
         maxRetryAttempts = 3,                // Maximum retry attempts
         retryBackoffMultiplier = 2.0         // Exponential backoff multiplier
@@ -299,7 +298,6 @@ Initialize the SDK with optional credential overrides and advanced configuration
 - `policyKey: String?` - Optional override for Brightcove Policy Key
 - `videoId: String?` - Optional override for Brightcove Video ID
 - `debug: Boolean` - Enable debug logging (default: `false`)
-- `pollingIntervalMs: Long` - Interval in milliseconds to check for stream availability (default: `1000`)
 - `autoRetryOnError: Boolean` - Whether to automatically retry on errors (default: `true`)
 - `maxRetryAttempts: Int` - Maximum number of retry attempts (default: `3`)
 - `retryBackoffMultiplier: Double` - Multiplier for exponential backoff (default: `2.0`)

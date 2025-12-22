@@ -18,7 +18,8 @@ data class LocaleConfig(
 data class EnvironmentConfig(
     val videoId: String? = null,
     val state: String? = null, // "preLive", "live", "postLive"
-    val languages: Map<String, LocaleConfig>? = null
+    val locale: Map<String, LocaleConfig>? = null,
+    val intervals: Map<String, Int>? = null // polling intervals in seconds: "preLive", "live", "postLive"
 )
 
 /**
