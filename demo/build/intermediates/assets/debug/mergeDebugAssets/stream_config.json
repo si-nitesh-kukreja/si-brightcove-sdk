@@ -1,8 +1,8 @@
 {
     "camera": {
         "prod": {
-            "videoId": "6386317292112",
-            "state": "preLive",
+            "videoId": "6384389158112",
+            "state": "live",
             "locale": {
                 "en": {
                     "mediaType": "image",
@@ -25,7 +25,7 @@
             },
             "intervals": {
                 "preLive": 30,
-                "live": 120,
+                "live": 10,
                 "postLive": 30
             }
         },
@@ -33,8 +33,8 @@
     },
     "mobile": {
         "prod": {
-            "videoId": "6386375769112",
-            "state": "postLive",
+            "videoId": "6384085229112",
+            "state": "prelive",
             "locale": {
                 "en": {
                     "mediaType": "image",
@@ -57,7 +57,7 @@
             },
             "intervals": {
                 "preLive": 10,
-                "live": 120,
+                "live": 10,
                 "postLive": 10
             }
         },

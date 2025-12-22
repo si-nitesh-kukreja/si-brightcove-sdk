@@ -24,23 +24,6 @@ object BrightcoveLiveStreamSDK {
     private var analyticsManager: AnalyticsManager? = null
     private var standaloneEventEmitter: EventEmitter? = null
 
-    // Hardcoded credentials mapping based on eventType/environment
-    // Replace these placeholders with real account/policy values.
-
-    private const val VIDEO_ID_MOBILE_PROD = "6384389158112"
-    private const val VIDEO_ID_CAMERA_PROD = "6384085229112"
-    private const val VIDEO_ID_MOBILE_NON_PROD = "6384389158112"
-    private const val VIDEO_ID_CAMERA_NON_PROD = "6384085229112"
-
-    private const val ACCOUNT_ID_MOBILE_PROD = "6415818918001"
-    private const val ACCOUNT_ID_CAMERA_PROD = "6415818918001"
-    private const val ACCOUNT_ID_MOBILE_NON_PROD = "6415818918001"
-    private const val ACCOUNT_ID_CAMERA_NON_PROD = "6415818918001"
-
-    private const val POLICY_KEY_MOBILE_PROD = "BCpkADawqM3ikTFBoFaNzjghiJjf1GzxYQ0kOqZTl_VBJfjxqdil2A0wfqN_tDj8CSJNwPPsz9EQX8unZYHCkXq6nq5THsJ9ShpPuWoKaCCTuymjtweUk4DWqbdBNgF5ZOeG1DDeoaMQzJIoVa92V09iU5ET5R2meoG3FQ"
-    private const val POLICY_KEY_CAMERA_PROD = "BCpkADawqM3ikTFBoFaNzjghiJjf1GzxYQ0kOqZTl_VBJfjxqdil2A0wfqN_tDj8CSJNwPPsz9EQX8unZYHCkXq6nq5THsJ9ShpPuWoKaCCTuymjtweUk4DWqbdBNgF5ZOeG1DDeoaMQzJIoVa92V09iU5ET5R2meoG3FQ"
-    private const val POLICY_KEY_MOBILE_NON_PROD = "BCpkADawqM3ikTFBoFaNzjghiJjf1GzxYQ0kOqZTl_VBJfjxqdil2A0wfqN_tDj8CSJNwPPsz9EQX8unZYHCkXq6nq5THsJ9ShpPuWoKaCCTuymjtweUk4DWqbdBNgF5ZOeG1DDeoaMQzJIoVa92V09iU5ET5R2meoG3FQ"
-    private const val POLICY_KEY_CAMERA_NON_PROD = "BCpkADawqM3ikTFBoFaNzjghiJjf1GzxYQ0kOqZTl_VBJfjxqdil2A0wfqN_tDj8CSJNwPPsz9EQX8unZYHCkXq6nq5THsJ9ShpPuWoKaCCTuymjtweUk4DWqbdBNgF5ZOeG1DDeoaMQzJIoVa92V09iU5ET5R2meoG3FQ"
 
     /**
      * Initialize the SDK with required parameters.
@@ -50,9 +33,6 @@ object BrightcoveLiveStreamSDK {
      * @param environment Required environment (PROD/NON_PROD)
      * @param locale Required locale identifier for configuration
      * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
-     * @param videoId Brightcove Video ID for live stream (optional override, leave empty if not used)
-     * @param accountId Optional override for Brightcove Account ID
-     * @param policyKey Optional override for Brightcove Policy Key
      * @param debug Optional debug flag (default: false)
      * @throws IllegalStateException if SDK is already initialized
      */
@@ -62,10 +42,6 @@ object BrightcoveLiveStreamSDK {
         eventType: SdkEventType,
         environment: SdkEnvironment,
         locale: String,
-        state: Boolean,
-        videoId: String = "",
-        accountId: String? = null,
-        policyKey: String? = null,
         debug: Boolean
     ) {
         initialize(
@@ -73,10 +49,6 @@ object BrightcoveLiveStreamSDK {
             eventType = eventType,
             environment = environment,
             locale = locale,
-            state = state,
-            videoId = videoId,
-            accountId = accountId,
-            policyKey = policyKey,
             debug = debug,
             autoRetryOnError = true,
             maxRetryAttempts = 3,
@@ -92,9 +64,6 @@ object BrightcoveLiveStreamSDK {
      * @param environment Required environment (PROD/NON_PROD)
      * @param locale Required locale identifier for configuration
      * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
-     * @param videoId Brightcove Video ID for live stream (optional override, leave empty if not used)
-     * @param accountId Optional override for Brightcove Account ID
-     * @param policyKey Optional override for Brightcove Policy Key
      * @param debug Optional debug flag (default: false)
      * @param autoRetryOnError Whether to automatically retry on errors (default: true)
      * @param maxRetryAttempts Maximum number of retry attempts (default: 3)
@@ -107,10 +76,6 @@ object BrightcoveLiveStreamSDK {
         eventType: SdkEventType,
         environment: SdkEnvironment,
         locale: String,
-        state: Boolean,
-        videoId: String = "",
-        accountId: String? = null,
-        policyKey: String? = null,
         debug: Boolean = false,
         autoRetryOnError: Boolean = true,
         maxRetryAttempts: Int = 3,
@@ -122,11 +87,6 @@ object BrightcoveLiveStreamSDK {
 
         val appContext = context.applicationContext
 
-        val resolvedCredentials = resolveCredentials(eventType, environment, accountId, policyKey, videoId)
-        val resolvedAccountId = resolvedCredentials.first
-        val resolvedPolicyKey = resolvedCredentials.second
-        val resolvedVideoId = resolvedCredentials.third
-
         // Load configuration if state=false (config-driven behavior)
         var configVideoId = ""
         var configState = ""
@@ -136,7 +96,6 @@ object BrightcoveLiveStreamSDK {
         var configMediaLoop = true
         var configIntervals = emptyMap<String, Int>()
 
-        if (!state) {
             val configManager = ConfigurationManager.getInstance()
             val configResult = configManager.loadConfiguration(appContext, debug)
 
@@ -167,12 +126,9 @@ object BrightcoveLiveStreamSDK {
                 }
                 // Continue with default values
             }
-        }
+
 
         sdkConfig = SDKConfig(
-            accountId = resolvedAccountId,
-            policyKey = resolvedPolicyKey,
-            videoId = resolvedVideoId,
             eventType = eventType,
             environment = environment,
             debug = debug,
@@ -180,7 +136,6 @@ object BrightcoveLiveStreamSDK {
             maxRetryAttempts = maxRetryAttempts,
             retryBackoffMultiplier = retryBackoffMultiplier,
             locale = locale,
-            useConfig = state,
             configVideoId = configVideoId,
             configState = configState,
             configMediaType = configMediaType,
@@ -260,37 +215,6 @@ object BrightcoveLiveStreamSDK {
     /**
      * Resolve credentials based on event type/environment with optional overrides.
      */
-    private fun resolveCredentials(
-        eventType: SdkEventType,
-        environment: SdkEnvironment,
-        accountIdOverride: String?,
-        policyKeyOverride: String?,
-        videoIdOverride: String?
-    ): Triple<String, String, String> {
-        val mappedAccountId = when {
-            eventType == SdkEventType.mobile && environment == SdkEnvironment.prod -> ACCOUNT_ID_MOBILE_PROD
-            eventType == SdkEventType.camera && environment == SdkEnvironment.prod -> ACCOUNT_ID_CAMERA_PROD
-            eventType == SdkEventType.mobile && environment == SdkEnvironment.nonProd -> ACCOUNT_ID_MOBILE_NON_PROD
-            else -> ACCOUNT_ID_CAMERA_NON_PROD
-        }
-        val mappedPolicyKey = when {
-            eventType == SdkEventType.mobile && environment == SdkEnvironment.prod -> POLICY_KEY_MOBILE_PROD
-            eventType == SdkEventType.camera && environment == SdkEnvironment.prod -> POLICY_KEY_CAMERA_PROD
-            eventType == SdkEventType.mobile && environment == SdkEnvironment.nonProd -> POLICY_KEY_MOBILE_NON_PROD
-            else -> POLICY_KEY_CAMERA_NON_PROD
-        }
-        val mappedVideoId = when {
-            eventType == SdkEventType.mobile && environment == SdkEnvironment.prod -> VIDEO_ID_MOBILE_PROD
-            eventType == SdkEventType.camera && environment == SdkEnvironment.prod -> VIDEO_ID_CAMERA_PROD
-            eventType == SdkEventType.mobile && environment == SdkEnvironment.nonProd -> VIDEO_ID_MOBILE_NON_PROD
-            else -> VIDEO_ID_CAMERA_NON_PROD
-        }
-        
-        val finalAccountId = accountIdOverride?.takeIf { it.isNotBlank() } ?: mappedAccountId
-        val finalPolicyKey = policyKeyOverride?.takeIf { it.isNotBlank() } ?: mappedPolicyKey
-        val finalVideoId = videoIdOverride?.takeIf { it.isNotBlank() } ?: mappedVideoId
-        return Triple(finalAccountId, finalPolicyKey, finalVideoId)
-    }
     
     /**
      * Create a Brightcove Catalog instance for video retrieval using the player view's EventEmitter.

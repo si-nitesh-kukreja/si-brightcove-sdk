@@ -91,8 +91,6 @@ fun LiveStreamScreen(
     onStateChanged: ((LiveStreamState) -> Unit)? = null,
     onError: ((String, SDKError) -> Unit)? = null,
     onPlayerEvent: ((PlayerEvent) -> Unit)? = null,
-    liveTitle: String = "",
-    liveDescription: String = "",
     showPlayerControls: Boolean = false,
     modifier: Modifier
 ) {
@@ -100,14 +98,10 @@ fun LiveStreamScreen(
     Logger.isDebugEnabled = debug
 
     val context = LocalContext.current
-    val accountId: String? = null
-    val policyKey: String? = null
-    val videoId = ""
     val errorRetryText = "Retry"
     val showCloseButton = false
     val loadingText = "Loading..."
-    val state = false
-    
+
     // Ensure SDK is initialized before creating the ViewModel to avoid race conditions.
     if (!BrightcoveLiveStreamSDK.isInitialized()) {
         BrightcoveLiveStreamSDK.initialize(
@@ -115,10 +109,6 @@ fun LiveStreamScreen(
             eventType = eventType,
             environment = environment,
             locale = locale,
-            state = state,
-            videoId = videoId,
-            accountId = accountId,
-            policyKey = policyKey,
             debug = debug
         )
     }
@@ -168,8 +158,6 @@ fun LiveStreamScreen(
     when (currentState) {
         is LiveStreamState.Loading -> {
             LoadingContent(
-                liveTitle = liveTitle,
-                liveDescription = liveDescription,
                 loadingText = loadingText,
                 modifier = modifier
             )
@@ -186,8 +174,8 @@ fun LiveStreamScreen(
         is LiveStreamState.Live -> {
             LiveStreamContent(
                 viewModel = viewModel,
-                title = liveTitle.ifEmpty { currentState.title },
-                description = liveDescription.ifEmpty { currentState.description },
+                title = currentState.title,
+                description = currentState.description,
                 showOverlay = showOverlay,
                 showPlayerControls = showPlayerControls,
                 onTap = { viewModel.toggleOverlay() },
@@ -318,8 +306,6 @@ private fun PreLiveContent(
 
 @Composable
 private fun LoadingContent(
-    liveTitle: String,
-    liveDescription: String,
     loadingText: String,
     modifier: Modifier = Modifier
 ) {
@@ -346,44 +332,6 @@ private fun LoadingContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Live Title with glow effect
-            if (liveTitle.isNotEmpty()) {
-                Text(
-                    text = liveTitle,
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 32.sp,
-                        letterSpacing = 1.sp
-                    ),
-                    color = Color.White,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .shadow(
-                            elevation = 8.dp,
-                            spotColor = Color(0xFF00D4FF),
-                            ambientColor = Color(0xFF00D4FF)
-                        )
-                )
-            }
-
-            // Live Description with subtle styling
-            if (liveDescription.isNotEmpty()) {
-                Text(
-                    text = liveDescription,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 18.sp,
-                        lineHeight = 24.sp
-                    ),
-                    color = Color.White.copy(alpha = 0.85f),
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(bottom = 48.dp)
-                        .padding(horizontal = 16.dp)
-                )
-            }
-
             // Enhanced loading indicator with pulse animation
             LoadingIndicatorWithPulse(loadingText)
         }

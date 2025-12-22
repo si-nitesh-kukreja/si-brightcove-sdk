@@ -141,7 +141,7 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
             try {
                 if (BrightcoveLiveStreamSDK.isInitialized()) {
                     val config = BrightcoveLiveStreamSDK.getConfig()
-                    if (!config.useConfig && config.configState.isNotBlank()) {
+                    if (config.configState.isNotBlank()) {
                         val configStateLower = config.configState.lowercase().trim()
                         if (configStateLower == "prelive") {
                             // Immediately show pre-live content from config
@@ -189,7 +189,6 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                 val config = BrightcoveLiveStreamSDK.getConfig()
                 
                 // If using config-driven behavior, check config state first
-                if (!config.useConfig) {
                     // Config-driven behavior is enabled
                     if (config.configState.isBlank()) {
                         // Config state is missing/empty - this means config failed to load
@@ -266,7 +265,6 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                             return@launch // Don't check Brightcove video for unknown config state
                         }
                     }
-                }
                 
                 // Check Brightcove video (for live state or when not using config)
                 val catalog = BrightcoveLiveStreamSDK.getBrightcoveEmitter(playerView)
@@ -389,9 +387,8 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                     is LiveStreamState.Live -> {
                         // Only stop checking if not using config (state=true)
                         // If using config (state=false), continue checking to update state
-                        if (config.useConfig) {
+
                             break
-                        }
                     }
                 }
             }
