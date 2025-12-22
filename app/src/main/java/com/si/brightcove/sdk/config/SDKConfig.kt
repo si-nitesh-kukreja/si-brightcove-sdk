@@ -13,7 +13,7 @@ internal data class SDKConfig(
     val maxRetryAttempts: Int = 3,
     val retryBackoffMultiplier: Double = 2.0,
     // New configuration parameters
-    val locale: String = "en",
+    val locales: String = "en",
     val configVideoId: String = "",
     val configState: String = "",
     val configMediaType: MediaType = MediaType.IMAGE,

@@ -178,7 +178,7 @@ class ConfigurationManager private constructor() {
     fun getConfiguration(
         eventType: SdkEventType,
         environment: Environment,
-        locale: String
+        locales: String
     ): Result<StreamConfigData> {
         val config = configuration ?: return Result.failure(IllegalStateException("Configuration not loaded"))
 
@@ -200,21 +200,21 @@ class ConfigurationManager private constructor() {
             val state = envConfig.state
                 ?: return Result.failure(IllegalArgumentException("State not found in configuration for ${environment.name}"))
             
-            val localeMap = envConfig.locale
-                ?: return Result.failure(IllegalArgumentException("locale not found in configuration for ${environment.name}"))
+            val localesMap = envConfig.locales
+                ?: return Result.failure(IllegalArgumentException("locales not found in configuration for ${environment.name}"))
 
-            val localeConfig = localeMap[locale]
-                ?: return Result.failure(IllegalArgumentException("Locale '$locale' not found in configuration"))
+            val localesConfig = localesMap[locales]
+                ?: return Result.failure(IllegalArgumentException("locales '$locales' not found in configuration"))
 
             val intervals = envConfig.intervals ?: emptyMap()
 
             val result = StreamConfigData(
                 videoId = videoId,
                 state = state,
-                mediaType = localeConfig.mediaType,
-                mediaUrl = localeConfig.mediaUrl,
-                mediaTitle = localeConfig.mediaTitle,
-                mediaLoop = localeConfig.mediaLoop,
+                mediaType = localesConfig.mediaType,
+                mediaUrl = localesConfig.mediaUrl,
+                mediaTitle = localesConfig.mediaTitle,
+                mediaLoop = localesConfig.mediaLoop,
                 intervals = intervals
             )
 

@@ -36,9 +36,14 @@ fun VideoPlayer(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Debug logging
+    // Debug logging for creation
+    LaunchedEffect(Unit) {
+        Logger.d("VideoPlayer: Composable created with videoUrl=$videoUrl, loop=$loop")
+    }
+
+    // Debug logging for parameter changes
     LaunchedEffect(videoUrl, loop) {
-        Logger.d("VideoPlayer: Created/Updated with videoUrl=$videoUrl, loop=$loop")
+        Logger.d("VideoPlayer: Parameters updated - videoUrl=$videoUrl, loop=$loop")
     }
 
     // Create ExoPlayer instance optimized for performance
@@ -150,6 +155,21 @@ fun VideoPlayer(
         exoPlayer.repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
     }
 
+    // Handle lifecycle events and disposal
+    DisposableEffect(Unit) {
+        onDispose {
+            // Stop and release the video when this composable is disposed
+            // This happens when switching from VIDEO to IMAGE media type
+            try {
+                exoPlayer.stop()
+                exoPlayer.clearMediaItems()
+                Logger.d("VideoPlayer disposed - stopping video playback")
+            } catch (e: Exception) {
+                Logger.e("Error stopping video on dispose: ${e.message}")
+            }
+        }
+    }
+
     // Handle lifecycle events to pause/resume playback
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -171,7 +191,7 @@ fun VideoPlayer(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-            exoPlayer.release()
+            // Don't release here since the outer DisposableEffect handles disposal
         }
     }
 

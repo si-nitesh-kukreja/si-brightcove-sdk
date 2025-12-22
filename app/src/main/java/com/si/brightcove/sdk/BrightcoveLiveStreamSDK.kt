@@ -54,7 +54,7 @@ object BrightcoveLiveStreamSDK {
      * @param context Application context
      * @param eventType Required event type (MOBILE/CAMERA)
      * @param environment Required environment (PROD/NON_PROD)
-     * @param locale Required locale identifier for configuration
+     * @param locales Required locales identifier for configuration
      * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
      * @param debug Optional debug flag (default: false)
      * @throws IllegalStateException if SDK is already initialized
@@ -64,14 +64,14 @@ object BrightcoveLiveStreamSDK {
         context: Context,
         eventType: SdkEventType,
         environment: SdkEnvironment,
-        locale: String,
+        locales: String,
         debug: Boolean
     ) {
         initialize(
             context = context,
             eventType = eventType,
             environment = environment,
-            locale = locale,
+            locales = locales,
             debug = debug,
             autoRetryOnError = true,
             maxRetryAttempts = 3,
@@ -85,7 +85,7 @@ object BrightcoveLiveStreamSDK {
      * @param context Application context
      * @param eventType Required event type (MOBILE/CAMERA)
      * @param environment Required environment (PROD/NON_PROD)
-     * @param locale Required locale identifier for configuration
+     * @param locales Required locales identifier for configuration
      * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
      * @param debug Optional debug flag (default: false)
      * @param autoRetryOnError Whether to automatically retry on errors (default: true)
@@ -98,7 +98,7 @@ object BrightcoveLiveStreamSDK {
         context: Context,
         eventType: SdkEventType,
         environment: SdkEnvironment,
-        locale: String,
+        locales: String,
         debug: Boolean = false,
         autoRetryOnError: Boolean = true,
         maxRetryAttempts: Int = 3,
@@ -120,7 +120,8 @@ object BrightcoveLiveStreamSDK {
         var configIntervals = emptyMap<String, Int>()
 
             val configManager = ConfigurationManager.getInstance()
-            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
+//            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
+            val apiUrl = "https://squirrel-prepared-marlin.ngrok-free.app/stream_config.json"
 
             // Try API first, fallback to local assets if API fails
             var configResult = configManager.loadConfigurationFromApi(apiUrl, debug)
@@ -130,7 +131,7 @@ object BrightcoveLiveStreamSDK {
             }
 
             if (configResult.isSuccess) {
-                val streamConfigResult = configManager.getConfiguration(eventType, environment, locale)
+                val streamConfigResult = configManager.getConfiguration(eventType, environment, locales)
                 if (streamConfigResult.isSuccess) {
                     val streamConfig = streamConfigResult.getOrThrow()
                     configVideoId = streamConfig.videoId
@@ -146,7 +147,7 @@ object BrightcoveLiveStreamSDK {
                     }
                 } else {
                     if (debug) {
-                        Logger.w("Failed to get configuration for locale '$locale': ${streamConfigResult.exceptionOrNull()?.message}")
+                        Logger.w("Failed to get configuration for locales '$locales': ${streamConfigResult.exceptionOrNull()?.message}")
                     }
                     // Continue with default values
                 }
@@ -165,7 +166,7 @@ object BrightcoveLiveStreamSDK {
             autoRetryOnError = autoRetryOnError,
             maxRetryAttempts = maxRetryAttempts,
             retryBackoffMultiplier = retryBackoffMultiplier,
-            locale = locale,
+            locales = locales,
             configVideoId = configVideoId,
             configState = configState,
             configMediaType = configMediaType,
@@ -231,7 +232,7 @@ object BrightcoveLiveStreamSDK {
                 autoRetryOnError = currentConfig.autoRetryOnError,
                 maxRetryAttempts = currentConfig.maxRetryAttempts,
                 retryBackoffMultiplier = currentConfig.retryBackoffMultiplier,
-                locale = currentConfig.locale,
+                locales = currentConfig.locales,
                 configVideoId = newConfigData.videoId,
                 configState = newConfigData.state,
                 configMediaType = newConfigData.mediaType,
@@ -432,14 +433,15 @@ object BrightcoveLiveStreamSDK {
     private fun updateConfigurationFromApi(debug: Boolean) {
         try {
             val configManager = ConfigurationManager.getInstance()
-            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
+//            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
+            val apiUrl = "https://squirrel-prepared-marlin.ngrok-free.app/stream_config.json"
 
             // Store current config state before attempting update
             val currentConfigResult = if (configManager.isConfigurationLoaded()) {
                 configManager.getConfiguration(
                     sdkConfig?.eventType ?: SdkEventType.mobile,
                     sdkConfig?.environment ?: SdkEnvironment.prod,
-                    sdkConfig?.locale ?: "en"
+                    sdkConfig?.locales ?: "en"
                 )
             } else null
 
@@ -450,7 +452,7 @@ object BrightcoveLiveStreamSDK {
                     val newData = configManager.getConfiguration(
                         sdkConfig?.eventType ?: SdkEventType.mobile,
                         sdkConfig?.environment ?: SdkEnvironment.prod,
-                        sdkConfig?.locale ?: "en"
+                        sdkConfig?.locales ?: "en"
                     ).getOrThrow()
 
                     onConfigurationUpdated(newData)
@@ -460,7 +462,7 @@ object BrightcoveLiveStreamSDK {
                     val newData = configManager.getConfiguration(
                         sdkConfig?.eventType ?: SdkEventType.mobile,
                         sdkConfig?.environment ?: SdkEnvironment.prod,
-                        sdkConfig?.locale ?: "en"
+                        sdkConfig?.locales ?: "en"
                     ).getOrThrow()
 
                     if (debug) {

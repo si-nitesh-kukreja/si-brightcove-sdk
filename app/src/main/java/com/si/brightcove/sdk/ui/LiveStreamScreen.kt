@@ -71,7 +71,7 @@ import rememberDominantColor
  * @param preLiveScheduledTime Date/time when the live stream is scheduled to start
  * @param eventType Required event type (MOBILE/CAMERA)
  * @param environment Required environment (PROD/NON_PROD)
- * @param locale Required locale identifier (e.g., "en", "hi", "it") for configuration
+ * @param locales Required locales identifier (e.g., "en", "hi", "it") for configuration
  * @param state Configuration behavior toggle: true = existing behavior, false = config-driven behavior
  * @param accountId Optional override for Brightcove Account ID
  * @param policyKey Optional override for Brightcove Policy Key
@@ -89,7 +89,7 @@ import rememberDominantColor
 fun LiveStreamScreen(
     eventType: EventType,
     environment: Environment,
-    locale: String,
+    locales: String,
     debug: Boolean = BuildConfig.DEBUG,
     onClose: (() -> Unit)? = null,
     onStateChanged: ((LiveStreamState) -> Unit)? = null,
@@ -112,7 +112,7 @@ fun LiveStreamScreen(
             context = context,
             eventType = eventType,
             environment = environment,
-            locale = locale,
+            locales = locales,
             debug = debug
         )
     }
@@ -244,13 +244,16 @@ private fun PreLiveContent(
     // This ensures proper cleanup of video resources when switching to image
     // Monitor media type changes for debugging
     LaunchedEffect(mediaType) {
-        if (BuildConfig.DEBUG) {
-            Logger.d("PreLiveContent: Switching to mediaType=$mediaType, url=$mediaUrl")
-        }
+        Logger.d("PreLiveContent: Switching to mediaType=$mediaType, url=$mediaUrl")
     }
 
     when (mediaType) {
         MediaType.IMAGE -> {
+            // Debug: Show that we're displaying image
+            if (BuildConfig.DEBUG) {
+                Logger.d("PreLiveContent: Displaying IMAGE content")
+            }
+
             // Extract dominant color from image
             val dominantColor = rememberDominantColor(mediaUrl)
             
@@ -299,6 +302,11 @@ private fun PreLiveContent(
         }
 
         MediaType.VIDEO -> {
+            // Debug: Show that we're displaying video
+            if (BuildConfig.DEBUG) {
+                Logger.d("PreLiveContent: Displaying VIDEO content")
+            }
+
             // Try to extract color from video thumbnail (if available) or use fallback
             // For video, we attempt to extract from thumbnail URL or use a default color
             val dominantColor = rememberDominantColor(mediaUrl)

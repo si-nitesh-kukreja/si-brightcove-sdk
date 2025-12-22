@@ -3,7 +3,7 @@
         "prod": {
             "videoId": "6384389158112",
             "state": "live",
-            "locale": {
+            "locales": {
                 "en": {
                     "mediaType": "image",
                     "mediaUrl": "https://images.unsplash.com/photo-1615440321449-83897161d806?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZlcnJhcml8ZW58MHx8MHx8fDA%3D",
@@ -34,8 +34,8 @@
     "mobile": {
         "prod": {
             "videoId": "6384085229112",
-            "state": "prelive",
-            "locale": {
+            "state": "postlive",
+            "locales": {
                 "en": {
                     "mediaType": "image",
                     "mediaUrl": "https://i.pinimg.com/736x/7a/4a/45/7a4a45ecb7e8254892665d97f82a1706.jpg",
@@ -49,8 +49,8 @@
                     "mediaLoop": false
                 },
                 "kl": {
-                    "mediaType": "video",
-                    "mediaUrl": "https://cdn.pixabay.com/video/2024/08/16/226795_large.mp4",
+                    "mediaType": "image",
+                    "mediaUrl": "https://i.pinimg.com/736x/76/8e/8a/768e8a367dc06a61112412f3e31a9a22.jpg",
                     "mediaTitle": "Road Image",
                     "mediaLoop": true
                 }

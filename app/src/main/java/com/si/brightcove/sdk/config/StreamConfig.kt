@@ -3,9 +3,9 @@ package com.si.brightcove.sdk.config
 import com.si.brightcove.sdk.model.MediaType
 
 /**
- * Configuration for a specific locale in a stream configuration.
+ * Configuration for a specific locales in a stream configuration.
  */
-data class LocaleConfig(
+data class localesConfig(
     val mediaType: MediaType,
     val mediaUrl: String = "",
     val mediaTitle: String = "",
@@ -18,7 +18,7 @@ data class LocaleConfig(
 data class EnvironmentConfig(
     val videoId: String? = null,
     val state: String? = null, // "preLive", "live", "postLive"
-    val locale: Map<String, LocaleConfig>? = null,
+    val locales: Map<String, localesConfig>? = null,
     val intervals: Map<String, Int>? = null // polling intervals in seconds: "preLive", "live", "postLive"
 )
 
