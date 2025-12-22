@@ -34,7 +34,7 @@
     "mobile": {
         "prod": {
             "videoId": "6384085229112",
-            "state": "prelive",
+            "state": "live",
             "locale": {
                 "en": {
                     "mediaType": "image",
@@ -57,7 +57,7 @@
             },
             "intervals": {
                 "preLive": 10,
-                "live": 10,
+                "live": 120,
                 "postLive": 10
             }
         },
