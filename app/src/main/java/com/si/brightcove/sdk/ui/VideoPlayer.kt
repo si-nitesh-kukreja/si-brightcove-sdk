@@ -43,9 +43,9 @@ fun VideoPlayer(
             // Set properties to force software decoding
             System.setProperty("media.stagefright.legacyencoder", "true")
             System.setProperty("media.stagefright.legacydecoder", "true")
-            Logger.d("Forced software decoding properties set", "VideoPlayer")
+            Logger.d("Forced software decoding properties set")
         } catch (e: Exception) {
-            Logger.w("Could not set software decoding properties", e, "VideoPlayer")
+            Logger.w("Could not set software decoding properties", e)
         }
 
         val renderersFactory = DefaultRenderersFactory(context).apply {
@@ -92,34 +92,34 @@ fun VideoPlayer(
                 // Add error listener for codec issues
                 addListener(object : Player.Listener {
                     override fun onPlayerError(error: PlaybackException) {
-                        Logger.e("ExoPlayer error: ${error.message}", error, "VideoPlayer")
+                        Logger.e("ExoPlayer error: ${error.message}", error)
                         when (error.errorCode) {
                             PlaybackException.ERROR_CODE_DECODER_INIT_FAILED -> {
-                                Logger.w("Hardware decoder failed - software fallback should handle this", "VideoPlayer")
+                                Logger.w("Hardware decoder failed - software fallback should handle this")
                             }
                             PlaybackException.ERROR_CODE_DECODING_FAILED -> {
-                                Logger.e("Decoding failed - video format not supported by hardware or software decoder", "VideoPlayer")
+                                Logger.e("Decoding failed - video format not supported by hardware or software decoder")
                             }
                             else -> {
-                                Logger.e("Other playback error: ${error.errorCode}", "VideoPlayer")
+                                Logger.e("Other playback error: ${error.errorCode}")
                             }
                         }
                     }
 
                     override fun onVideoSizeChanged(videoSize: VideoSize) {
-                        Logger.d("Video size: ${videoSize.width}x${videoSize.height}", "VideoPlayer")
+                        Logger.d("Video size: ${videoSize.width}x${videoSize.height}")
                     }
 
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         when (playbackState) {
                             Player.STATE_BUFFERING -> {
-                                Logger.d("Buffering...", "VideoPlayer")
+                                Logger.d("Buffering...")
                             }
                             Player.STATE_READY -> {
-                                Logger.d("Ready to play", "VideoPlayer")
+                                Logger.d("Ready to play")
                             }
                             Player.STATE_ENDED -> {
-                                Logger.d("Playback ended", "VideoPlayer")
+                                Logger.d("Playback ended")
                             }
                         }
                     }

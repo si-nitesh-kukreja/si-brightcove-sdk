@@ -18,7 +18,7 @@ internal class AnalyticsManager(
      * @param screenName Name of the screen being viewed
      */
     fun trackPageView(screenName: String) {
-        Logger.d("Pageview tracked: $screenName", "AnalyticsManager")
+        Logger.d("Pageview tracked: $screenName")
         
         // In a real implementation, this would send analytics to your analytics service
         // For now, we'll just log it. Parent apps should not receive this data.

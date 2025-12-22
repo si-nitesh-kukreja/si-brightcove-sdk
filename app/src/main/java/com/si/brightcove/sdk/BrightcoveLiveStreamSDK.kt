@@ -2,12 +2,15 @@ package com.si.brightcove.sdk
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.brightcove.player.edge.Catalog
 import com.brightcove.player.event.EventEmitter
 import com.brightcove.player.view.BrightcoveExoPlayerVideoView
 import com.si.brightcove.sdk.analytics.AnalyticsManager
 import com.si.brightcove.sdk.config.ConfigurationManager
 import com.si.brightcove.sdk.config.SDKConfig
+import com.si.brightcove.sdk.config.StreamConfigData
 import com.si.brightcove.sdk.model.EventType as SdkEventType
 import com.si.brightcove.sdk.model.Environment as SdkEnvironment
 import com.si.brightcove.sdk.ui.Logger
@@ -17,12 +20,17 @@ import com.si.brightcove.sdk.ui.Logger
  * Must be initialized once per app lifecycle before using LiveStreamScreen.
  */
 object BrightcoveLiveStreamSDK {
-    
+
     private var isInitialized = false
     private var sdkConfig: SDKConfig? = null
     @SuppressLint("StaticFieldLeak")
     private var analyticsManager: AnalyticsManager? = null
     private var standaloneEventEmitter: EventEmitter? = null
+
+    // Periodic config updates
+    private var configUpdateHandler: Handler? = null
+    private var configUpdateRunnable: Runnable? = null
+    private var isPeriodicUpdatesEnabled = false
 
 
     /**
@@ -97,7 +105,14 @@ object BrightcoveLiveStreamSDK {
         var configIntervals = emptyMap<String, Int>()
 
             val configManager = ConfigurationManager.getInstance()
-            val configResult = configManager.loadConfiguration(appContext, debug)
+            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
+
+            // Try API first, fallback to local assets if API fails
+            var configResult = configManager.loadConfigurationFromApi(apiUrl, debug)
+            if (configResult.isFailure && debug) {
+                Logger.w("API configuration loading failed, falling back to local assets")
+                configResult = configManager.loadConfiguration(appContext, debug)
+            }
 
             if (configResult.isSuccess) {
                 val streamConfigResult = configManager.getConfiguration(eventType, environment, locale)
@@ -181,6 +196,9 @@ object BrightcoveLiveStreamSDK {
         }
         
         isInitialized = true
+
+        // Start periodic config updates
+        startPeriodicConfigUpdates(context, debug)
     }
     
     /**
@@ -205,6 +223,26 @@ object BrightcoveLiveStreamSDK {
      */
     @JvmStatic
     fun isInitialized(): Boolean = isInitialized
+
+    /**
+     * Stop periodic configuration updates.
+     * Useful when app is going to background or for cleanup.
+     */
+    @JvmStatic
+    fun stopPeriodicUpdates() {
+        stopPeriodicConfigUpdates()
+    }
+
+    /**
+     * Manually trigger a configuration update from API.
+     * @param debug Enable debug logging for this update
+     */
+    @JvmStatic
+    fun updateConfigurationNow(debug: Boolean = false) {
+        if (isInitialized) {
+            updateConfigurationFromApi(debug)
+        }
+    }
     
     /**
      * Get the standalone EventEmitter instance.
@@ -272,6 +310,134 @@ object BrightcoveLiveStreamSDK {
                 Logger.e("Failed to create Catalog", e)
             }
             null
+        }
+    }
+
+    /**
+     * Start periodic configuration updates from API.
+     * Checks for config updates using the current effective polling interval.
+     * This means config updates happen at the same frequency as stream polling.
+     */
+    private fun startPeriodicConfigUpdates(context: Context, debug: Boolean) {
+        if (isPeriodicUpdatesEnabled) return
+
+        configUpdateHandler = Handler(Looper.getMainLooper())
+        configUpdateRunnable = object : Runnable {
+            override fun run() {
+                updateConfigurationFromApi(debug)
+                // Schedule next update using current effective polling interval
+                val nextInterval = sdkConfig?.getEffectivePollingInterval() ?: (1 * 60 * 1000L) // fallback to 1 minutes
+                configUpdateHandler?.postDelayed(this, nextInterval)
+            }
+        }
+
+        isPeriodicUpdatesEnabled = true
+        // Start the first update using current effective polling interval
+        val initialInterval = sdkConfig?.getEffectivePollingInterval() ?: (1 * 60 * 1000L) // fallback to 1 minutes
+        configUpdateHandler?.postDelayed(configUpdateRunnable!!, initialInterval)
+
+        if (debug) {
+            val intervalMinutes = initialInterval / 1000 / 60
+            Logger.d("Started periodic configuration updates (every $intervalMinutes minutes based on current polling interval)")
+        }
+    }
+
+    /**
+     * Stop periodic configuration updates.
+     */
+    private fun stopPeriodicConfigUpdates() {
+        configUpdateHandler?.removeCallbacks(configUpdateRunnable!!)
+        configUpdateHandler = null
+        configUpdateRunnable = null
+        isPeriodicUpdatesEnabled = false
+    }
+
+    /**
+     * Update configuration from API if changes are detected.
+     */
+    private fun updateConfigurationFromApi(debug: Boolean) {
+        try {
+            val configManager = ConfigurationManager.getInstance()
+            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
+
+            // Store current config state before attempting update
+            val currentConfigResult = if (configManager.isConfigurationLoaded()) {
+                configManager.getConfiguration(
+                    sdkConfig?.eventType ?: SdkEventType.mobile,
+                    sdkConfig?.environment ?: SdkEnvironment.prod,
+                    sdkConfig?.locale ?: "en"
+                )
+            } else null
+
+            val configResult = configManager.loadConfigurationFromApi(apiUrl, debug)
+            if (configResult.isSuccess) {
+                // Check if configuration has actually changed by comparing with previous state
+                if (currentConfigResult?.isSuccess == true) {
+                    val currentData = currentConfigResult.getOrThrow()
+                    val newData = configManager.getConfiguration(
+                        sdkConfig?.eventType ?: SdkEventType.mobile,
+                        sdkConfig?.environment ?: SdkEnvironment.prod,
+                        sdkConfig?.locale ?: "en"
+                    ).getOrThrow()
+
+                    onConfigurationUpdated(newData)
+                    // Compare key values to see if config changed
+//                    if (hasConfigChanged(currentData, newData)) {
+//                        if (debug) {
+//                            Logger.d("Configuration updated from API: videoId=${newData.videoId}, state=${newData.state}")
+//                        }
+//                        // Notify listeners or update UI if needed
+//
+//                    } else {
+//                        if (debug) {
+//                            Logger.d("Configuration checked from API - no changes detected")
+//                        }
+//                    }
+                } else {
+                    // First time loading config
+                    val newData = configManager.getConfiguration(
+                        sdkConfig?.eventType ?: SdkEventType.mobile,
+                        sdkConfig?.environment ?: SdkEnvironment.prod,
+                        sdkConfig?.locale ?: "en"
+                    ).getOrThrow()
+
+                    if (debug) {
+                        Logger.d("Configuration loaded from API for first time: videoId=${newData.videoId}, state=${newData.state}")
+                    }
+                    onConfigurationUpdated(newData)
+                }
+            } else {
+                if (debug) {
+                    Logger.d("Periodic config update failed: ${configResult.exceptionOrNull()?.message}")
+                }
+            }
+        } catch (e: Exception) {
+            if (debug) {
+                Logger.e("Error during periodic config update: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Check if configuration has changed by comparing key values.
+     */
+    private fun hasConfigChanged(oldConfig: StreamConfigData,
+                                  newConfig: StreamConfigData): Boolean {
+        return oldConfig.videoId != newConfig.videoId ||
+               oldConfig.state != newConfig.state ||
+               oldConfig.mediaType != newConfig.mediaType ||
+               oldConfig.mediaUrl != newConfig.mediaUrl ||
+               oldConfig.intervals != newConfig.intervals
+    }
+
+    /**
+     * Called when configuration is updated from API.
+     * Override this method to handle configuration changes.
+     */
+    internal open fun onConfigurationUpdated(newConfig: StreamConfigData) {
+        // Default implementation - can be overridden by subclasses or listeners can be added
+        if (sdkConfig?.debug == true) {
+            Logger.d("Configuration updated: videoId=${newConfig.videoId}, state=${newConfig.state}")
         }
     }
 }

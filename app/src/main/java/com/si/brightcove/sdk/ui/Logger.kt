@@ -17,108 +17,108 @@ object Logger {
     /**
      * Log a debug message.
      */
-    fun d(message: String, tag: String = TAG) {
+    fun d(message: String) {
         if (isDebugEnabled) {
-            android.util.Log.d(tag, message)
+            android.util.Log.d(TAG, message)
         }
     }
 
     /**
      * Log a debug message with throwable.
      */
-    fun d(message: String, throwable: Throwable, tag: String = TAG) {
+    fun d(message: String, throwable: Throwable) {
         if (isDebugEnabled) {
-            android.util.Log.d(tag, message, throwable)
+            android.util.Log.d(TAG, message, throwable)
         }
     }
 
     /**
      * Log an info message.
      */
-    fun i(message: String, tag: String = TAG) {
+    fun i(message: String) {
         if (isDebugEnabled) {
-            android.util.Log.i(tag, message)
+            android.util.Log.i(TAG, message)
         }
     }
 
     /**
      * Log an info message with throwable.
      */
-    fun i(message: String, throwable: Throwable, tag: String = TAG) {
+    fun i(message: String, throwable: Throwable) {
         if (isDebugEnabled) {
-            android.util.Log.i(tag, message, throwable)
+            android.util.Log.i(TAG, message, throwable)
         }
     }
 
     /**
      * Log a warning message.
      */
-    fun w(message: String, tag: String = TAG) {
+    fun w(message: String) {
         if (isDebugEnabled) {
-            android.util.Log.w(tag, message)
+            android.util.Log.w(TAG, message)
         }
     }
 
     /**
      * Log a warning message with throwable.
      */
-    fun w(message: String, throwable: Throwable, tag: String = TAG) {
+    fun w(message: String, throwable: Throwable) {
         if (isDebugEnabled) {
-            android.util.Log.w(tag, message, throwable)
+            android.util.Log.w(TAG, message, throwable)
         }
     }
 
     /**
      * Log an error message.
      */
-    fun e(message: String, tag: String = TAG) {
+    fun e(message: String) {
         if (isDebugEnabled) {
-            android.util.Log.e(tag, message)
+            android.util.Log.e(TAG, message)
         }
     }
 
     /**
      * Log an error message with throwable.
      */
-    fun e(message: String, throwable: Throwable, tag: String = TAG) {
+    fun e(message: String, throwable: Throwable) {
         if (isDebugEnabled) {
-            android.util.Log.e(tag, message, throwable)
+            android.util.Log.e(TAG, message, throwable)
         }
     }
 
     /**
      * Log a verbose message.
      */
-    fun v(message: String, tag: String = TAG) {
+    fun v(message: String) {
         if (isDebugEnabled) {
-            android.util.Log.v(tag, message)
+            android.util.Log.v(TAG, message)
         }
     }
 
     /**
      * Log a verbose message with throwable.
      */
-    fun v(message: String, throwable: Throwable, tag: String = TAG) {
+    fun v(message: String, throwable: Throwable) {
         if (isDebugEnabled) {
-            android.util.Log.v(tag, message, throwable)
+            android.util.Log.v(TAG, message, throwable)
         }
     }
 
     /**
      * Log a wtf (What a Terrible Failure) message.
      */
-    fun wtf(message: String, tag: String = TAG) {
+    fun wtf(message: String) {
         if (isDebugEnabled) {
-            android.util.Log.wtf(tag, message)
+            android.util.Log.wtf(TAG, message)
         }
     }
 
     /**
      * Log a wtf (What a Terrible Failure) message with throwable.
      */
-    fun wtf(message: String, throwable: Throwable, tag: String = TAG) {
+    fun wtf(message: String, throwable: Throwable) {
         if (isDebugEnabled) {
-            android.util.Log.wtf(tag, message, throwable)
+            android.util.Log.wtf(TAG, message, throwable)
         }
     }
 }

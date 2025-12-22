@@ -39,14 +39,14 @@ fun BrightcovePlayerView(
     showControls: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    Logger.d(">>> BrightcovePlayerView composable called <<<", "BrightcoveSDK")
+    Logger.d(">>> BrightcovePlayerView composable called <<<")
     val video by viewModel.video.collectAsState()
     val context = LocalContext.current
-    Logger.d("BrightcovePlayerView - video state: ${video?.id ?: "null"}", "BrightcoveSDK")
+    Logger.d("BrightcovePlayerView - video state: ${video?.id ?: "null"}")
     
     AndroidView(
         factory = { ctx ->
-            Logger.d("=== Creating BrightcoveExoPlayerVideoView ===", "BrightcoveSDK")
+            Logger.d("=== Creating BrightcoveExoPlayerVideoView ===")
             val playerView = BrightcoveExoPlayerVideoView(ctx)
             Logger.d("Player view created: ${playerView.javaClass.name}")
             
@@ -112,7 +112,7 @@ fun BrightcovePlayerView(
                     // Log all available constructors for debugging
                     if (BrightcoveLiveStreamSDK.getConfig().debug) {
                         val constructors = fullScreenControllerClass.declaredConstructors
-                        Logger.d("FullScreenController constructors: ${constructors.map { it.parameterTypes.joinToString { it.simpleName } }}", "BrightcoveSDK")
+                        Logger.d("FullScreenController constructors: ${constructors.map { it.parameterTypes.joinToString { it.simpleName } }}")
                     }
                     
                     var fullScreenController: Any? = null
@@ -188,7 +188,7 @@ fun BrightcovePlayerView(
                         } catch (e: Exception) {
                             // Try next constructor
                             if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                                Logger.d("Constructor ${params.map { it.simpleName }} failed: ${e.message}", "BrightcoveSDK")
+                                Logger.d("Constructor ${params.map { it.simpleName }} failed: ${e.message}")
                             }
                         }
                     }
@@ -243,12 +243,12 @@ fun BrightcovePlayerView(
                                 }
                                 
                                 if (!fieldSet) {
-                                    Logger.w("BrightcoveSDK", "Could not set FullScreenController via reflection field in any class")
+                                    Logger.w("Could not set FullScreenController via reflection field in any class")
                                 }
                             }
                         }
                     } else {
-                        Logger.w("BrightcoveSDK", "Could not create FullScreenController with any known constructor.")
+                        Logger.w("Could not create FullScreenController with any known constructor.")
                         // Do NOT disable fullscreen when controls are meant to be shown
                         if (!showControls) {
                             tryDisableFullscreenButton(playerView, ctx)
@@ -261,7 +261,7 @@ fun BrightcovePlayerView(
                     }
                 }
             } catch (e: Exception) {
-                Logger.w("Error initializing FullScreenController: ${e.message}", e, "BrightcoveSDK")
+                Logger.w("Error initializing FullScreenController: ${e.message}", e)
                 // Only disable fullscreen if controls should be hidden
                 if (!showControls) {
                     tryDisableFullscreenButton(playerView, ctx)
@@ -280,7 +280,7 @@ fun BrightcovePlayerView(
                 immediateEmitter = playerView.eventEmitter
                 Logger.d("Direct property access: ${if (immediateEmitter != null) "AVAILABLE" else "NULL"}")
             } catch (e: Exception) {
-                Logger.e("Exception getting EventEmitter via property: ${e.message}", e, "BrightcoveSDK")
+                Logger.e("Exception getting EventEmitter via property: ${e.message}", e)
             }
             
             // Try reflection to check if property exists
@@ -323,7 +323,7 @@ fun BrightcovePlayerView(
                     }
                     Logger.d("Found ${fields.size} EventEmitter-related fields: ${fields.map { it.name }}")
                 } catch (e: Exception) {
-                    Logger.e("Error inspecting class: ${e.message}", "BrightcoveSDK")
+                    Logger.e("Error inspecting class: ${e.message}")
                 }
             }
             
@@ -343,11 +343,11 @@ fun BrightcovePlayerView(
                         viewModel.setPlayerView(playerView, eventEmitterReady = true)
                         true
                     } else {
-                        Logger.w("BrightcoveSDK", "EventEmitter is null - will retry")
+                        Logger.w("EventEmitter is null - will retry")
                         false
                     }
                 } catch (e: Exception) {
-                    Logger.e("Exception accessing EventEmitter: ${e.javaClass.simpleName} - ${e.message}", e, "BrightcoveSDK")
+                    Logger.e("Exception accessing EventEmitter: ${e.javaClass.simpleName} - ${e.message}", e)
                     false
                 }
             }
@@ -436,7 +436,7 @@ fun BrightcovePlayerView(
                             view.start()
                             Logger.d("Video added and started successfully")
                         } catch (e: Exception) {
-                            Logger.w("Error adding video: ${e.message}, will retry", "BrightcoveSDK")
+                            Logger.w("Error adding video: ${e.message}, will retry")
                             // Retry after a shorter delay (reduced from 2000ms for faster loading)
                             frameLayout.postDelayed({
                                 try {
@@ -445,7 +445,7 @@ fun BrightcovePlayerView(
                                     view.start()
                                     Logger.d("Video added successfully on retry")
                                 } catch (ex: Exception) {
-                                    Logger.w("Error adding video on retry: ${ex.message}", "BrightcoveSDK")
+                                    Logger.w("Error adding video on retry: ${ex.message}")
                                 }
                             }, 500) // Reduced from 2000ms to 500ms
                         }
@@ -479,7 +479,7 @@ fun BrightcovePlayerView(
                                             Logger.d("Error adding video: ${e.message}, retrying in ${delay}ms (attempt $retryCount/$maxRetries)")
                                             frameLayout.postDelayed({ tryAddVideo() }, delay)
                                         } else {
-                                            Logger.e("Failed to add video after $maxRetries attempts: ${e.message}", "BrightcoveSDK")
+                                            Logger.e("Failed to add video after $maxRetries attempts: ${e.message}")
                                         }
                                     }
                                 }
@@ -667,7 +667,7 @@ private fun tryDisableFullscreenButton(
             Logger.d("Could not disable fullscreen on player view: ${e.message}")
         }
     } catch (e: Exception) {
-        Logger.w("BrightcoveSDK", "Error trying to disable fullscreen button: ${e.message}")
+        Logger.w("Error trying to disable fullscreen button: ${e.message}")
     }
 }
 
@@ -784,7 +784,7 @@ private fun waitForEventEmitterWithRetry(
             val eventEmitter = try {
                 playerView.eventEmitter
             } catch (e: Exception) {
-                Logger.e("Exception accessing EventEmitter on attempt $attempts", e, "BrightcoveSDK")
+                Logger.e("Exception accessing EventEmitter on attempt $attempts", e)
                 null
             }
             
@@ -799,7 +799,7 @@ private fun waitForEventEmitterWithRetry(
                 }
                 frameLayout.postDelayed(this, 50) // Check every 50ms (reduced from 100ms for faster loading)
             } else {
-                Logger.e("BrightcoveSDK", "EventEmitter not available after $maxAttempts attempts! Setting player view anyway - Catalog operations will fail until EventEmitter is available")
+                Logger.e("EventEmitter not available after $maxAttempts attempts! Setting player view anyway - Catalog operations will fail until EventEmitter is available")
                 // Set player view anyway - the ViewModel will keep retrying
                 viewModel.setPlayerView(playerView, eventEmitterReady = false)
             }

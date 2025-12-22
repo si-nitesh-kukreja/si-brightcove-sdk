@@ -52,16 +52,16 @@ class MainActivity : ComponentActivity() {
     private fun handleStateChange(state: LiveStreamState) {
         when (state) {
             is LiveStreamState.Loading -> {
-                Logger.d("State: Loading stream...", "DemoApp")
+                Logger.d("State: Loading stream...")
             }
             is LiveStreamState.PreLive -> {
-                Logger.d("State: Pre-Live - Scheduled: ${state.mediaTitle}", "DemoApp")
+                Logger.d("State: Pre-Live - Scheduled: ${state.mediaTitle}")
             }
             is LiveStreamState.Live -> {
-                Logger.d("State: Live - Title: ${state.title} Description : ${state.description}", "DemoApp")
+                Logger.d("State: Live - Title: ${state.title} Description : ${state.description}")
             }
             is LiveStreamState.Error -> {
-                Logger.e("State: Error - ${state.errorMessage} (${state.errorCode})", "DemoApp")
+                Logger.e("State: Error - ${state.errorMessage} (${state.errorCode})")
             }
         }
     }
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
      * Handle errors.
      */
     private fun handleError(errorMessage: String, errorCode: SDKError) {
-        Logger.e("Error: $errorMessage (Code: $errorCode)", "DemoApp")
+        Logger.e("Error: $errorMessage (Code: $errorCode)")
         
         // You can show a toast, snackbar, or custom error UI here
         when (errorCode) {
@@ -98,28 +98,28 @@ class MainActivity : ComponentActivity() {
     private fun handlePlayerEvent(event: PlayerEvent) {
         when (event) {
             is PlayerEvent.PlaybackStarted -> {
-                Logger.d("Player Event: Playback Started", "DemoApp")
+                Logger.d("Player Event: Playback Started")
             }
             is PlayerEvent.PlaybackPaused -> {
-                Logger.d("Player Event: Playback Paused", "DemoApp")
+                Logger.d("Player Event: Playback Paused")
             }
             is PlayerEvent.PlaybackResumed -> {
-                Logger.d("Player Event: Playback Resumed", "DemoApp")
+                Logger.d("Player Event: Playback Resumed")
             }
             is PlayerEvent.Buffering -> {
-                Logger.d("Player Event: Buffering", "DemoApp")
+                Logger.d("Player Event: Buffering")
             }
             is PlayerEvent.BufferingComplete -> {
-                Logger.d("Player Event: Buffering Complete", "DemoApp")
+                Logger.d("Player Event: Buffering Complete")
             }
             is PlayerEvent.VideoLoaded -> {
-                Logger.d("Player Event: Video Loaded", "DemoApp")
+                Logger.d("Player Event: Video Loaded")
             }
             is PlayerEvent.PlaybackCompleted -> {
-                Logger.d("Player Event: Playback Completed", "DemoApp")
+                Logger.d("Player Event: Playback Completed")
             }
             is PlayerEvent.PlaybackError -> {
-                Logger.e("Player Event: Playback Error - ${event.errorMessage}", "DemoApp")
+                Logger.e("Player Event: Playback Error - ${event.errorMessage}")
             }
         }
     }

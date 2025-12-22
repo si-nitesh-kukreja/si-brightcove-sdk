@@ -11,7 +11,14 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import java.io.IOException
+import java.io.InputStreamReader
 import java.lang.reflect.Type
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import com.si.brightcove.sdk.ui.Logger
 
 /**
@@ -50,20 +57,119 @@ class ConfigurationManager private constructor() {
             }
         } catch (e: Exception) {
             if (debug) {
-                Logger.e("Failed to load configuration", e, "ConfigurationManager")
+                Logger.e("Failed to load configuration", e)
             }
             Result.failure(e)
         }
     }
 
     /**
-     * Load configuration from API (future implementation).
-     * This will replace the JSON loading in the future.
+     * Load configuration from API endpoint.
+     * Fetches JSON configuration from the provided URL using background thread.
      */
     fun loadConfigurationFromApi(apiUrl: String, debug: Boolean = false): Result<StreamConfiguration> {
-        // TODO: Implement API loading logic
-        // For now, return failure to indicate not implemented
-        return Result.failure(NotImplementedError("API configuration loading not yet implemented"))
+        val executor = Executors.newSingleThreadExecutor()
+
+        val callable = Callable {
+            try {
+                if (debug) {
+                    Logger.d("Loading configuration from API: $apiUrl")
+                }
+                val url = URL(apiUrl)
+                val connection = url.openConnection() as HttpURLConnection
+
+                connection.apply {
+                    requestMethod = "GET"
+                    connectTimeout = 10_000 // 10 seconds
+                    readTimeout = 10_000    // 10 seconds
+                    setRequestProperty("Accept", "application/json")
+                }
+
+                val responseCode = connection.responseCode
+                if (debug) {
+                    Logger.d("API Response Code: $responseCode")
+                }
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    connection.inputStream.use { inputStream ->
+                        InputStreamReader(inputStream).use { reader ->
+                            val jsonString = reader.readText()
+                            if (debug) {
+                                Logger.d("Successfully fetched configuration from API (${jsonString.length} characters)")
+                            }
+                            Logger.d("JsonString :  $jsonString")
+                            val config = parseConfiguration(jsonString)
+                            Result.success(config)
+                        }
+                    }
+                } else {
+                    val errorMessage = "HTTP error: $responseCode"
+                    if (debug) {
+                        Logger.e("Failed to fetch configuration from API: $errorMessage")
+                    }
+                    Result.failure(IOException("HTTP $responseCode: Failed to fetch configuration from $apiUrl"))
+                }
+            } catch (e: java.io.InterruptedIOException) {
+                val errorMessage = "Network request was interrupted"
+                if (debug) {
+                    Logger.e(errorMessage)
+                }
+                Result.failure(IOException("Network request was interrupted"))
+            } catch (e: Exception) {
+                val errorMessage = "Failed to load configuration from API: ${e.javaClass.simpleName} - ${e.message}"
+                if (debug) {
+                    Logger.e(errorMessage, e)
+                }
+                Result.failure(IOException("Network error: $errorMessage"))
+            }
+        }
+
+        val future: Future<Result<StreamConfiguration>> = executor.submit(callable)
+
+        return try {
+            // Wait for the result with a timeout
+            val result = future.get(15, TimeUnit.SECONDS)
+            // Set configuration and loaded state on success
+            result.onSuccess { config ->
+                configuration = config
+                isLoaded = true
+                if (debug) {
+                    Logger.d("Configuration parsed and loaded successfully")
+                }
+            }
+            result
+        } catch (e: java.util.concurrent.TimeoutException) {
+            if (debug) {
+                Logger.e("Timeout while loading configuration from API")
+            }
+            // Cancel the task
+            future.cancel(true)
+            Result.failure(IOException("Network operation timed out after 15 seconds"))
+        } catch (e: InterruptedException) {
+            if (debug) {
+                Logger.e("Thread interrupted while loading configuration from API")
+            }
+            // Cancel the task
+            future.cancel(true)
+            Thread.currentThread().interrupt()
+            Result.failure(IOException("Network operation was interrupted"))
+        } catch (e: Exception) {
+            if (debug) {
+                Logger.e("Error while loading configuration from API: ${e.message}")
+            }
+            Result.failure(IOException("Network operation failed: ${e.message}"))
+        } finally {
+            // Graceful shutdown
+            executor.shutdown()
+            try {
+                if (!executor.awaitTermination(2, TimeUnit.SECONDS)) {
+                    // If still running after 2 seconds, force shutdown
+                    executor.shutdownNow()
+                }
+            } catch (e: InterruptedException) {
+                executor.shutdownNow()
+                Thread.currentThread().interrupt()
+            }
+        }
     }
 
     /**
