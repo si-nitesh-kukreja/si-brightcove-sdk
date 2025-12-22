@@ -34,7 +34,7 @@
     "mobile": {
         "prod": {
             "videoId": "6384085229112",
-            "state": "prelive",
+            "state": "postlive",
             "locale": {
                 "en": {
                     "mediaType": "image",
@@ -44,21 +44,21 @@
                 },
                 "it": {
                     "mediaType": "image",
-                    "mediaUrl": "",
+                    "mediaUrl": "https://i.pinimg.com/736x/76/8e/8a/768e8a367dc06a61112412f3e31a9a22.jpg",
                     "mediaTitle": "Starting soon narendra",
                     "mediaLoop": false
                 },
                 "kl": {
-                    "mediaType": "video",
-                    "mediaUrl": "https://cdn.pixabay.com/video/2024/08/16/226795_large.mp4",
-                    "mediaTitle": "Road Video",
+                    "mediaType": "image",
+                    "mediaUrl": "https://i.pinimg.com/736x/7a/4a/45/7a4a45ecb7e8254892665d97f82a1706.jpg",
+                    "mediaTitle": "Car Image",
                     "mediaLoop": true
                 }
             },
             "intervals": {
-                "preLive": 10,
-                "live": 10,
-                "postLive": 10
+                "preLive": 20,
+                "live": 20,
+                "postLive": 20
             }
         },
         "nonProd": {}
