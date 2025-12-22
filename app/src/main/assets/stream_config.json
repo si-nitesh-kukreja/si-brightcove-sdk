@@ -49,9 +49,9 @@
                     "mediaLoop": false
                 },
                 "kl": {
-                    "mediaType": "video",
-                    "mediaUrl": "https://cdn.pixabay.com/video/2024/08/16/226795_large.mp4",
-                    "mediaTitle": "Road Video",
+                    "mediaType": "image",
+                    "mediaUrl": "https://i.pinimg.com/736x/76/8e/8a/768e8a367dc06a61112412f3e31a9a22.jpg",
+                    "mediaTitle": "Road image",
                     "mediaLoop": true
                 }
             },
