@@ -34,7 +34,7 @@
     "mobile": {
         "prod": {
             "videoId": "6384085229112",
-            "state": "live",
+            "state": "prelive",
             "locale": {
                 "en": {
                     "mediaType": "image",
@@ -49,9 +49,9 @@
                     "mediaLoop": false
                 },
                 "kl": {
-                    "mediaType": "image",
-                    "mediaUrl": "https://i.pinimg.com/736x/7a/4a/45/7a4a45ecb7e8254892665d97f82a1706.jpg",
-                    "mediaTitle": "Car Image",
+                    "mediaType": "video",
+                    "mediaUrl": "https://cdn.pixabay.com/video/2024/08/16/226795_large.mp4",
+                    "mediaTitle": "Road Image",
                     "mediaLoop": true
                 }
             },
