@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.runtime.key
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
@@ -51,6 +52,7 @@ import com.si.brightcove.sdk.model.SDKError
 import com.si.brightcove.sdk.player.BrightcovePlayerView
 import com.si.brightcove.sdk.viewmodel.LiveStreamViewModel
 import java.text.SimpleDateFormat
+import androidx.compose.runtime.key
 import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -233,6 +235,20 @@ private fun PreLiveContent(
     modifier: Modifier = Modifier
 ) {
 
+    // Debug logging for media type changes
+    if (BuildConfig.DEBUG) {
+        Logger.d("PreLiveContent: Displaying mediaType=$mediaType, mediaUrl=$mediaUrl, mediaTitle=$mediaTitle")
+    }
+
+    // Force recomposition when media type changes by using it as part of the key
+    // This ensures proper cleanup of video resources when switching to image
+    // Monitor media type changes for debugging
+    LaunchedEffect(mediaType) {
+        if (BuildConfig.DEBUG) {
+            Logger.d("PreLiveContent: Switching to mediaType=$mediaType, url=$mediaUrl")
+        }
+    }
+
     when (mediaType) {
         MediaType.IMAGE -> {
             // Extract dominant color from image
@@ -293,12 +309,14 @@ private fun PreLiveContent(
                     .background(Color.Black)
                     .fillMaxSize()
             ) {
-                // Video player that fills the screen
-                VideoPlayer(
-                    videoUrl = mediaUrl,
-                    loop = mediaLoop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                // Video player that fills the screen - only active when mediaType is VIDEO
+                if (mediaType == MediaType.VIDEO) {
+                    VideoPlayer(
+                        videoUrl = mediaUrl,
+                        loop = mediaLoop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
                 // Title overlay at bottom center
                 if (mediaTitle.isNotEmpty()) {

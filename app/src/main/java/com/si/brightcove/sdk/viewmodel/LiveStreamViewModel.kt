@@ -447,19 +447,58 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     /**
-     * Update configuration and restart stream checking with new settings.
+     * Update configuration and handle state transitions.
      */
     fun updateConfiguration(newConfig: StreamConfigData) {
         if (BrightcoveLiveStreamSDK.getConfig().debug) {
-            Logger.d("LiveStreamViewModel: Configuration updated - videoId: ${newConfig.videoId}, state: ${newConfig.state}")
+            Logger.d("LiveStreamViewModel: Configuration updated - videoId: ${newConfig.videoId}, state: ${newConfig.state}, mediaType: ${newConfig.mediaType}, mediaUrl: ${newConfig.mediaUrl}")
         }
 
-        // The existing periodic check will automatically use the new configuration
-        // from BrightcoveLiveStreamSDK.getConfig() on its next iteration
+        val newState = newConfig.state.lowercase().trim()
+        val currentState = _streamState.value
 
-        // If we want immediate effect, we could trigger an immediate check
-        viewModelScope.launch {
-            checkLiveStreamStatus()
+        // Handle state transitions based on new config
+        when (newState) {
+            "prelive", "postlive" -> {
+                // Transition to PreLive state if not already in it
+                if (currentState !is LiveStreamState.PreLive) {
+                    if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                        Logger.d("Config changed to prelive - transitioning from ${currentState::class.simpleName} to PreLive")
+                    }
+
+                    // Stop any playing video by clearing it
+                    _video.value = null
+
+                    // Transition to PreLive state
+                    val newPreLiveState = LiveStreamState.PreLive(
+                        mediaType = newConfig.mediaType,
+                        mediaUrl = newConfig.mediaUrl,
+                        mediaTitle = newConfig.mediaTitle,
+                        mediaLoop = newConfig.mediaLoop
+                    )
+                    _streamState.value = newPreLiveState
+                    if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                        Logger.d("LiveStreamViewModel: Created new PreLive state - mediaType: ${newConfig.mediaType}, mediaUrl: ${newConfig.mediaUrl}")
+                    }
+                }
+            }
+            "live" -> {
+                // If config says live, check if we should transition from PreLive to Live
+                if (currentState is LiveStreamState.PreLive) {
+                    if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                        Logger.d("Config changed to live - will check Brightcove video availability")
+                    }
+                    // Trigger immediate video check
+                    viewModelScope.launch {
+                        checkLiveStreamStatus()
+                    }
+                }
+            }
+            else -> {
+                if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                    Logger.w("Unknown config state: $newState")
+                }
+            }
         }
     }
 }

@@ -36,6 +36,11 @@ fun VideoPlayer(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    // Debug logging
+    LaunchedEffect(videoUrl, loop) {
+        Logger.d("VideoPlayer: Created/Updated with videoUrl=$videoUrl, loop=$loop")
+    }
+
     // Create ExoPlayer instance optimized for performance
     val exoPlayer = remember {
         // Force software decoding by setting system property for ExoPlayer
@@ -125,6 +130,24 @@ fun VideoPlayer(
                     }
                 })
             }
+    }
+
+    // Handle video URL changes
+    LaunchedEffect(videoUrl) {
+        try {
+            val mediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
+            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+            Logger.d("Video URL changed, updating media item: $videoUrl")
+        } catch (e: Exception) {
+            Logger.e("Error updating video URL: ${e.message}", e)
+        }
+    }
+
+    // Handle loop parameter changes
+    LaunchedEffect(loop) {
+        exoPlayer.repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
     }
 
     // Handle lifecycle events to pause/resume playback
