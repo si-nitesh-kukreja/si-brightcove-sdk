@@ -14,6 +14,9 @@ import com.si.brightcove.sdk.model.SDKError
 import com.si.brightcove.sdk.model.PlayerEvent
 import com.si.brightcove.sdk.network.NetworkMonitor
 import com.si.brightcove.sdk.ui.Logger
+import com.si.brightcove.sdk.config.StreamConfigData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -441,6 +444,23 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
      */
     fun emitPlayerEvent(event: PlayerEvent) {
         _playerEvent.value = event
+    }
+
+    /**
+     * Update configuration and restart stream checking with new settings.
+     */
+    fun updateConfiguration(newConfig: StreamConfigData) {
+        if (BrightcoveLiveStreamSDK.getConfig().debug) {
+            Logger.d("LiveStreamViewModel: Configuration updated - videoId: ${newConfig.videoId}, state: ${newConfig.state}")
+        }
+
+        // The existing periodic check will automatically use the new configuration
+        // from BrightcoveLiveStreamSDK.getConfig() on its next iteration
+
+        // If we want immediate effect, we could trigger an immediate check
+        viewModelScope.launch {
+            checkLiveStreamStatus()
+        }
     }
 }
 

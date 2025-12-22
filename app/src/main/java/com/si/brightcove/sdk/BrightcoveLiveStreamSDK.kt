@@ -14,6 +14,18 @@ import com.si.brightcove.sdk.config.StreamConfigData
 import com.si.brightcove.sdk.model.EventType as SdkEventType
 import com.si.brightcove.sdk.model.Environment as SdkEnvironment
 import com.si.brightcove.sdk.ui.Logger
+import java.util.concurrent.CopyOnWriteArrayList
+
+/**
+ * Listener interface for configuration changes.
+ */
+interface ConfigurationChangeListener {
+    /**
+     * Called when configuration is updated from API.
+     * @param newConfig The new configuration data
+     */
+    fun onConfigurationChanged(newConfig: StreamConfigData)
+}
 
 /**
  * Main SDK initialization class.
@@ -31,6 +43,9 @@ object BrightcoveLiveStreamSDK {
     private var configUpdateHandler: Handler? = null
     private var configUpdateRunnable: Runnable? = null
     private var isPeriodicUpdatesEnabled = false
+
+    // Configuration change listeners
+    private val configChangeListeners = CopyOnWriteArrayList<ConfigurationChangeListener>()
 
 
     /**
@@ -200,6 +215,37 @@ object BrightcoveLiveStreamSDK {
         // Start periodic config updates
         startPeriodicConfigUpdates(context, debug)
     }
+
+    /**
+     * Update the SDK configuration with new values from API.
+     * This is called when configuration changes dynamically.
+     */
+    internal fun updateSdkConfiguration(newConfigData: StreamConfigData) {
+        // Recreate SDK config with updated values
+        val currentConfig = sdkConfig
+        if (currentConfig != null) {
+            sdkConfig = SDKConfig(
+                eventType = currentConfig.eventType,
+                environment = currentConfig.environment,
+                debug = currentConfig.debug,
+                autoRetryOnError = currentConfig.autoRetryOnError,
+                maxRetryAttempts = currentConfig.maxRetryAttempts,
+                retryBackoffMultiplier = currentConfig.retryBackoffMultiplier,
+                locale = currentConfig.locale,
+                configVideoId = newConfigData.videoId,
+                configState = newConfigData.state,
+                configMediaType = newConfigData.mediaType,
+                configMediaUrl = newConfigData.mediaUrl,
+                configMediaTitle = newConfigData.mediaTitle,
+                configMediaLoop = newConfigData.mediaLoop,
+                configIntervals = newConfigData.intervals
+            )
+
+            if (currentConfig.debug) {
+                Logger.d("SDK configuration updated with new values")
+            }
+        }
+    }
     
     /**
      * Get the SDK configuration.
@@ -242,6 +288,34 @@ object BrightcoveLiveStreamSDK {
         if (isInitialized) {
             updateConfigurationFromApi(debug)
         }
+    }
+
+    /**
+     * Register a listener to be notified when configuration changes.
+     * @param listener The listener to register
+     */
+    @JvmStatic
+    fun addConfigurationChangeListener(listener: ConfigurationChangeListener) {
+        if (!configChangeListeners.contains(listener)) {
+            configChangeListeners.add(listener)
+        }
+    }
+
+    /**
+     * Unregister a configuration change listener.
+     * @param listener The listener to remove
+     */
+    @JvmStatic
+    fun removeConfigurationChangeListener(listener: ConfigurationChangeListener) {
+        configChangeListeners.remove(listener)
+    }
+
+    /**
+     * Remove all configuration change listeners.
+     */
+    @JvmStatic
+    fun clearConfigurationChangeListeners() {
+        configChangeListeners.clear()
     }
     
     /**
@@ -373,7 +447,6 @@ object BrightcoveLiveStreamSDK {
             if (configResult.isSuccess) {
                 // Check if configuration has actually changed by comparing with previous state
                 if (currentConfigResult?.isSuccess == true) {
-                    val currentData = currentConfigResult.getOrThrow()
                     val newData = configManager.getConfiguration(
                         sdkConfig?.eventType ?: SdkEventType.mobile,
                         sdkConfig?.environment ?: SdkEnvironment.prod,
@@ -381,18 +454,7 @@ object BrightcoveLiveStreamSDK {
                     ).getOrThrow()
 
                     onConfigurationUpdated(newData)
-                    // Compare key values to see if config changed
-//                    if (hasConfigChanged(currentData, newData)) {
-//                        if (debug) {
-//                            Logger.d("Configuration updated from API: videoId=${newData.videoId}, state=${newData.state}")
-//                        }
 //                        // Notify listeners or update UI if needed
-//
-//                    } else {
-//                        if (debug) {
-//                            Logger.d("Configuration checked from API - no changes detected")
-//                        }
-//                    }
                 } else {
                     // First time loading config
                     val newData = configManager.getConfiguration(
@@ -418,26 +480,28 @@ object BrightcoveLiveStreamSDK {
         }
     }
 
-    /**
-     * Check if configuration has changed by comparing key values.
-     */
-    private fun hasConfigChanged(oldConfig: StreamConfigData,
-                                  newConfig: StreamConfigData): Boolean {
-        return oldConfig.videoId != newConfig.videoId ||
-               oldConfig.state != newConfig.state ||
-               oldConfig.mediaType != newConfig.mediaType ||
-               oldConfig.mediaUrl != newConfig.mediaUrl ||
-               oldConfig.intervals != newConfig.intervals
-    }
 
     /**
      * Called when configuration is updated from API.
-     * Override this method to handle configuration changes.
+     * Notifies all registered listeners of the configuration change.
      */
-    internal open fun onConfigurationUpdated(newConfig: StreamConfigData) {
-        // Default implementation - can be overridden by subclasses or listeners can be added
+    internal fun onConfigurationUpdated(newConfig: StreamConfigData) {
         if (sdkConfig?.debug == true) {
             Logger.d("Configuration updated: videoId=${newConfig.videoId}, state=${newConfig.state}")
+        }
+
+        // Update the SDK configuration with new values
+        updateSdkConfiguration(newConfig)
+
+        // Notify all registered listeners
+        configChangeListeners.forEach { listener ->
+            try {
+                listener.onConfigurationChanged(newConfig)
+            } catch (e: Exception) {
+                if (sdkConfig?.debug == true) {
+                    Logger.e("Error notifying configuration listener: ${e.message}")
+                }
+            }
         }
     }
 }

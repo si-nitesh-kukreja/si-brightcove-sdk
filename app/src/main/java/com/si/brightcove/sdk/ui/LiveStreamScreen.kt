@@ -38,6 +38,8 @@ import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
 import com.si.brightcove.sdk.BrightcoveLiveStreamSDK
+import com.si.brightcove.sdk.ConfigurationChangeListener
+import com.si.brightcove.sdk.config.StreamConfigData
 import com.si.brightcove.sdk.viewmodel.LiveStreamViewModelFactory
 import com.si.brightcove.sdk.model.EventType
 import com.si.brightcove.sdk.model.Environment
@@ -121,6 +123,29 @@ fun LiveStreamScreen(
     val streamState by viewModel.streamState.collectAsState()
     val showOverlay by viewModel.showOverlay.collectAsState()
     val playerEvent by viewModel.playerEvent.collectAsState()
+
+    // Register for configuration changes
+    DisposableEffect(Unit) {
+        val configListener = object : ConfigurationChangeListener {
+            override fun onConfigurationChanged(newConfig: StreamConfigData) {
+                if (debug) {
+                    Logger.d("LiveStreamScreen: Configuration changed - videoId: ${newConfig.videoId}, state: ${newConfig.state}")
+                }
+
+                // Update ViewModel with new configuration
+                viewModel.updateConfiguration(newConfig)
+
+                // The ViewModel will handle updating the stream state based on new configuration
+                // The UI will automatically update through the streamState StateFlow
+            }
+        }
+
+        BrightcoveLiveStreamSDK.addConfigurationChangeListener(configListener)
+
+        onDispose {
+            BrightcoveLiveStreamSDK.removeConfigurationChangeListener(configListener)
+        }
+    }
     
     // Track pageview analytics and notify parent app of state changes
     LaunchedEffect(streamState) {
