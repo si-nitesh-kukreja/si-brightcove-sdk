@@ -4,7 +4,6 @@ import android.content.Context
 import com.si.brightcove.sdk.model.Environment
 import com.si.brightcove.sdk.model.EventType as SdkEventType
 import com.si.brightcove.sdk.model.MediaType
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -178,7 +177,8 @@ class ConfigurationManager private constructor() {
     fun getConfiguration(
         eventType: SdkEventType,
         environment: Environment,
-        locales: String
+        locales: String,
+        debug: Boolean
     ): Result<StreamConfigData> {
         val config = configuration ?: return Result.failure(IllegalStateException("Configuration not loaded"))
 
@@ -204,7 +204,15 @@ class ConfigurationManager private constructor() {
                 ?: return Result.failure(IllegalArgumentException("locales not found in configuration for ${environment.name}"))
 
             val localesConfig = localesMap[locales]
-                ?: return Result.failure(IllegalArgumentException("locales '$locales' not found in configuration"))
+                ?: if (state.lowercase() in listOf("prelive", "postlive") && locales != "en") {
+                    // For prelive/postlive states, fallback to 'en' if requested locale not found
+                    if (debug) {
+                        Logger.d("Locale '$locales' not found for $state state, falling back to 'en'")
+                    }
+                    localesMap["en"] ?: return Result.failure(IllegalArgumentException("Fallback locale 'en' not found in configuration"))
+                } else {
+                    return Result.failure(IllegalArgumentException("Locale '$locales' not found in configuration"))
+                }
 
             val intervals = envConfig.intervals ?: emptyMap()
 

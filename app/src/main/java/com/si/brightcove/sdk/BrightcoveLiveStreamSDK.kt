@@ -131,7 +131,7 @@ object BrightcoveLiveStreamSDK {
             }
 
             if (configResult.isSuccess) {
-                val streamConfigResult = configManager.getConfiguration(eventType, environment, locales)
+                val streamConfigResult = configManager.getConfiguration(eventType, environment, locales,debug)
                 if (streamConfigResult.isSuccess) {
                     val streamConfig = streamConfigResult.getOrThrow()
                     configVideoId = streamConfig.videoId
@@ -441,7 +441,8 @@ object BrightcoveLiveStreamSDK {
                 configManager.getConfiguration(
                     sdkConfig?.eventType ?: SdkEventType.mobile,
                     sdkConfig?.environment ?: SdkEnvironment.prod,
-                    sdkConfig?.locales ?: "en"
+                    sdkConfig?.locales ?: "en",
+                    debug
                 )
             } else null
 
@@ -452,7 +453,8 @@ object BrightcoveLiveStreamSDK {
                     val newData = configManager.getConfiguration(
                         sdkConfig?.eventType ?: SdkEventType.mobile,
                         sdkConfig?.environment ?: SdkEnvironment.prod,
-                        sdkConfig?.locales ?: "en"
+                        sdkConfig?.locales ?: "en",
+                        debug
                     ).getOrThrow()
 
                     onConfigurationUpdated(newData)
@@ -462,7 +464,8 @@ object BrightcoveLiveStreamSDK {
                     val newData = configManager.getConfiguration(
                         sdkConfig?.eventType ?: SdkEventType.mobile,
                         sdkConfig?.environment ?: SdkEnvironment.prod,
-                        sdkConfig?.locales ?: "en"
+                        sdkConfig?.locales ?: "en",
+                        debug
                     ).getOrThrow()
 
                     if (debug) {
