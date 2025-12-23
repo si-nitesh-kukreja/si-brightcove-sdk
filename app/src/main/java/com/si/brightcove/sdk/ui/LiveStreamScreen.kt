@@ -290,7 +290,7 @@ private fun PreLiveContent(
                 )
                 
                 // Title overlay at bottom center
-                if (mediaTitle.isNotEmpty()) {
+                if (mediaTitle.isNotBlank() && mediaTitle.isNotEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -346,7 +346,7 @@ private fun PreLiveContent(
                 }
 
                 // Title overlay at bottom center
-                if (mediaTitle.isNotEmpty()) {
+                if (mediaTitle.isNotBlank() && mediaTitle.isNotEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()

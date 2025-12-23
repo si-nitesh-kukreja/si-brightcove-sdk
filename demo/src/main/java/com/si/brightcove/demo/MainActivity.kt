@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                         eventType = EventType.camera,
                         environment = Environment.prod,
                         modifier = Modifier.fillMaxSize(),
-                        locales = "pp"
+                        locales = "en"
                     )
                 }
             }
