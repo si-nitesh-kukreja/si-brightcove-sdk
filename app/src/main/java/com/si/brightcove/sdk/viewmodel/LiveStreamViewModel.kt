@@ -446,6 +446,44 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
         _playerEvent.value = event
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        // Ensure Brightcove player is properly released when ViewModel is cleared
+        stopAndReleaseBrightcovePlayer()
+    }
+
+    /**
+     * Stop and release the Brightcove player.
+     */
+    private fun stopAndReleaseBrightcovePlayer() {
+        try {
+            playerView?.let { view ->
+                if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                    Logger.d("Stopping and releasing Brightcove player")
+                }
+
+                // Stop playback
+                view.pause()
+                view.stopPlayback()
+
+                // Clear current video
+                view.clear()
+
+                // Reset player view state
+                _video.value = null
+                _playerEvent.value = null
+
+                if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                    Logger.d("Brightcove player stopped and released successfully")
+                }
+            }
+        } catch (e: Exception) {
+            if (BrightcoveLiveStreamSDK.getConfig().debug) {
+                Logger.e("Error stopping Brightcove player: ${e.message}", e)
+            }
+        }
+    }
+
     /**
      * Update configuration and handle state transitions.
      */
@@ -466,7 +504,10 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                         Logger.d("Config changed to prelive - transitioning from ${currentState::class.simpleName} to PreLive")
                     }
 
-                    // Stop any playing video by clearing it
+                    // Stop and release Brightcove player if currently playing
+                    stopAndReleaseBrightcovePlayer()
+
+                    // Clear video state
                     _video.value = null
 
                     // Transition to PreLive state
@@ -483,12 +524,16 @@ class LiveStreamViewModel(application: Application) : AndroidViewModel(applicati
                 }
             }
             "live" -> {
-                // If config says live, check if we should transition from PreLive to Live
-                if (currentState is LiveStreamState.PreLive) {
+                // If config says live, ensure clean state and start Brightcove video
+                if (currentState !is LiveStreamState.Live) {
                     if (BrightcoveLiveStreamSDK.getConfig().debug) {
-                        Logger.d("Config changed to live - will check Brightcove video availability")
+                        Logger.d("Config changed to live - transitioning to Live state")
                     }
-                    // Trigger immediate video check
+
+                    // Stop any existing player before starting live stream
+                    stopAndReleaseBrightcovePlayer()
+
+                    // Trigger immediate video check to start live stream
                     viewModelScope.launch {
                         checkLiveStreamStatus()
                     }

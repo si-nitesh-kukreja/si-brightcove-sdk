@@ -234,6 +234,16 @@ private fun PreLiveContent(
     mediaLoop: Boolean,
     modifier: Modifier = Modifier
 ) {
+    // Track composable lifecycle
+    LaunchedEffect(Unit) {
+        Logger.d("PreLiveContent: Composable created/entered")
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            Logger.d("PreLiveContent: Composable disposed/exited")
+        }
+    }
 
     // Debug logging for media type changes
     if (BuildConfig.DEBUG) {
@@ -242,9 +252,14 @@ private fun PreLiveContent(
 
     // Force recomposition when media type changes by using it as part of the key
     // This ensures proper cleanup of video resources when switching to image
-    // Monitor media type changes for debugging
+    // Monitor media type changes for debugging and cleanup
     LaunchedEffect(mediaType) {
         Logger.d("PreLiveContent: Switching to mediaType=$mediaType, url=$mediaUrl")
+
+        // Additional cleanup when switching away from video
+        if (mediaType != MediaType.VIDEO) {
+            Logger.d("PreLiveContent: Switched away from VIDEO to $mediaType")
+        }
     }
 
     when (mediaType) {
@@ -304,7 +319,7 @@ private fun PreLiveContent(
         MediaType.VIDEO -> {
             // Debug: Show that we're displaying video
             if (BuildConfig.DEBUG) {
-                Logger.d("PreLiveContent: Displaying VIDEO content")
+                Logger.d("PreLiveContent: Displaying VIDEO content - mediaUrl=$mediaUrl")
             }
 
             // Try to extract color from video thumbnail (if available) or use fallback
@@ -319,11 +334,15 @@ private fun PreLiveContent(
             ) {
                 // Video player that fills the screen - only active when mediaType is VIDEO
                 if (mediaType == MediaType.VIDEO) {
-                    VideoPlayer(
-                        videoUrl = mediaUrl,
-                        loop = mediaLoop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    val videoKey = "video_${mediaUrl}"
+                    Logger.d("PreLiveContent: Creating VideoPlayer with key=$videoKey")
+                    androidx.compose.runtime.key(videoKey) {
+                        VideoPlayer(
+                            videoUrl = mediaUrl,
+                            loop = mediaLoop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
 
                 // Title overlay at bottom center
@@ -774,6 +793,17 @@ private fun LiveStreamContent(
     showCloseButton: Boolean,
     modifier: Modifier = Modifier
 ) {
+    // Track composable lifecycle
+    LaunchedEffect(Unit) {
+        Logger.d("LiveStreamContent: Composable created/entered - starting live stream")
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            Logger.d("LiveStreamContent: Composable disposed/exited - stopping live stream")
+        }
+    }
+
     Box(modifier = modifier) {
         // Brightcove Player
         BrightcovePlayerView(

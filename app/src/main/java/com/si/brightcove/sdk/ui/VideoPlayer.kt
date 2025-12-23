@@ -31,14 +31,33 @@ import com.google.android.exoplayer2.PlaybackException
 fun VideoPlayer(
     videoUrl: String,
     loop: Boolean = true,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    VideoPlayerContent(videoUrl, loop, modifier)
+}
+
+@Composable
+private fun VideoPlayerContent(
+    videoUrl: String,
+    loop: Boolean,
+    modifier: Modifier
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     // Debug logging for creation
     LaunchedEffect(Unit) {
-        Logger.d("VideoPlayer: Composable created with videoUrl=$videoUrl, loop=$loop")
+        Logger.d("VideoPlayer: Composable CREATED with videoUrl=$videoUrl, loop=$loop")
+    }
+
+    DisposableEffect(Unit) {
+        Logger.d("VideoPlayer: Composable entered composition")
+        onDispose {
+            Logger.d("VideoPlayer: Composable DISPOSED - stopping video for URL: $videoUrl")
+        }
     }
 
     // Debug logging for parameter changes
@@ -159,11 +178,12 @@ fun VideoPlayer(
     DisposableEffect(Unit) {
         onDispose {
             // Stop and release the video when this composable is disposed
-            // This happens when switching from VIDEO to IMAGE media type
+            // This happens when switching states (e.g., from PreLive VIDEO to Live)
             try {
+                Logger.d("VideoPlayer disposing - stopping video playback for URL: $videoUrl")
                 exoPlayer.stop()
                 exoPlayer.clearMediaItems()
-                Logger.d("VideoPlayer disposed - stopping video playback")
+                Logger.d("VideoPlayer disposed successfully")
             } catch (e: Exception) {
                 Logger.e("Error stopping video on dispose: ${e.message}")
             }
