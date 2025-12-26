@@ -23,8 +23,10 @@ internal data class SDKConfig(
     val configIntervals: Map<String, Int> = emptyMap() // polling intervals in seconds
 ) {
     // Hardcoded credentials
-    private val hardcodedAccountId = "6415818918001"
-    private val hardcodedPolicyKey = "BCpkADawqM3ikTFBoFaNzjghiJjf1GzxYQ0kOqZTl_VBJfjxqdil2A0wfqN_tDj8CSJNwPPsz9EQX8unZYHCkXq6nq5THsJ9ShpPuWoKaCCTuymjtweUk4DWqbdBNgF5ZOeG1DDeoaMQzJIoVa92V09iU5ET5R2meoG3FQ"
+//    private val hardcodedAccountId = "6415818918001"
+//    private val hardcodedPolicyKey = "BCpkADawqM3ikTFBoFaNzjghiJjf1GzxYQ0kOqZTl_VBJfjxqdil2A0wfqN_tDj8CSJNwPPsz9EQX8unZYHCkXq6nq5THsJ9ShpPuWoKaCCTuymjtweUk4DWqbdBNgF5ZOeG1DDeoaMQzJIoVa92V09iU5ET5R2meoG3FQ"
+    private val hardcodedAccountId = "6416100787001"
+    private val hardcodedPolicyKey = "BCpkADawqM2-HzL7jnwVuLVB8LD8e-l0k56gsFgoPrJRWp3_W2Nt4hWoH5JoX_iUqz2gbHNtI7-7qCbEbZdn5d_lPK_r4aGLd5rzsWzXRYKbH_OYEUr0h7z6_VerBRKM0U6eKJPgL917btNTlx6DrpNjIx25XtDLlKMWGA"
     /**
      * Get Brightcove Account ID (hardcoded value).
      */

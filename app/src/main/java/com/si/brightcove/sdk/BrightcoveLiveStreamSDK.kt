@@ -121,8 +121,8 @@ object BrightcoveLiveStreamSDK {
 
             val configManager = ConfigurationManager.getInstance()
 //            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
-//            val apiUrl = "https://squirrel-prepared-marlin.ngrok-free.app/stream_config.json"
-            val apiUrl = "https://nonsectarian-tashina-leerily.ngrok-free.dev/stream_config.json"
+            val apiUrl = "https://squirrel-prepared-marlin.ngrok-free.app/stream_config.json"
+//            val apiUrl = "https://nonsectarian-tashina-leerily.ngrok-free.dev/stream_config.json"
 
             // Try API first, fallback to local assets if API fails
             var configResult = configManager.loadConfigurationFromApi(apiUrl, debug)
@@ -435,8 +435,8 @@ object BrightcoveLiveStreamSDK {
         try {
             val configManager = ConfigurationManager.getInstance()
 //            val apiUrl = "https://raw.githubusercontent.com/si-nitesh-kukreja/si-brightcove-sdk/refs/heads/master/app/src/main/assets/stream_config.json"
-//            val apiUrl = "https://squirrel-prepared-marlin.ngrok-free.app/stream_config.json"
-            val apiUrl = "https://nonsectarian-tashina-leerily.ngrok-free.dev/stream_config.json"
+            val apiUrl = "https://squirrel-prepared-marlin.ngrok-free.app/stream_config.json"
+//            val apiUrl = "https://nonsectarian-tashina-leerily.ngrok-free.dev/stream_config.json"
 
             // Store current config state before attempting update
             val currentConfigResult = if (configManager.isConfigurationLoaded()) {

@@ -95,7 +95,7 @@ fun LiveStreamScreen(
     onStateChanged: ((LiveStreamState) -> Unit)? = null,
     onError: ((String, SDKError) -> Unit)? = null,
     onPlayerEvent: ((PlayerEvent) -> Unit)? = null,
-    showPlayerControls: Boolean = false,
+    showPlayerControls: Boolean = true,
     modifier: Modifier
 ) {
     // Initialize logger with debug setting
@@ -804,8 +804,8 @@ private fun LiveStreamContent(
         }
     }
 
-    Box(modifier = modifier) {
-        // Brightcove Player
+    Box(modifier = modifier.fillMaxSize().background(Color.Black)) {
+        // Brightcove Player - Full Screen
         BrightcovePlayerView(
             viewModel = viewModel,
             showControls = showPlayerControls,
